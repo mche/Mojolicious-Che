@@ -1,9 +1,9 @@
 package Mojolicious::Che;
 use Mojo::Base 'Mojolicious';
 
-our $VERSION = '0.002';
+our $VERSION = '0.003';
 
-sub che_go {
+sub поехали {
   my $app = shift;
   my $conf = $app->config;
   
@@ -14,17 +14,18 @@ sub che_go {
   $app->log->level( $conf->{'mojo_log_level'} || $conf->{'mojo'}{'log_level'} || 'debug');
   #~ warn "Mode: ", $app->mode, "; log level: ", $app->log->level;
   
-  $app->che_has();
-  $app->che_dbh();
-  $app->che_sth();
-  $app->che_plugins();
-  $app->che_hooks();
-  $app->che_session();
-  $app->che_routes();
+  $app->хазы();
+  $app->базы();
+  $app->запросы();
+  $app->плугины();
+  $app->хуки();
+  $app->сессия();
+  $app->спейсы();
+  $app->маршруты();
 
 }
 
-sub che_has { # Хазы из конфига
+sub хазы { # Хазы из конфига
   my $app = shift;
   my $conf = $app->config;
   my $h = $conf->{'mojo_has'} || $conf->{'mojo'}{'has'};
@@ -34,7 +35,7 @@ sub che_has { # Хазы из конфига
   } keys %$h;
 }
 
-sub che_plugins {# Плугины из конфига
+sub плугины {# Плугины из конфига
   my $app = shift;
   my $conf = $app->config;
   my $plugins = $conf->{'mojo_plugins'} || $conf->{'mojo'}{'plugins'}
@@ -45,7 +46,7 @@ sub che_plugins {# Плугины из конфига
   } @$plugins;
 }
 
-sub che_dbh {# обрабатывает dbh конфига
+sub базы {# обрабатывает dbh конфига
   my $app = shift;
   my $conf = $app->config;
   my $c_dbh = $conf->{dbh};
@@ -79,7 +80,7 @@ sub che_dbh {# обрабатывает dbh конфига
   
 }
 
-sub che_sth {# обрабатывает sth конфига
+sub запросы {# обрабатывает sth конфига
   my $app = shift;
   my $conf = $app->config;
   my $c_sth = $conf->{sth};
@@ -97,7 +98,7 @@ sub che_sth {# обрабатывает sth конфига
 }
 
   
-sub che_hooks {# Хуки из конфига
+sub хуки {# Хуки из конфига
   my $app = shift;
   my $conf = $app->config;
   my $hooks = $conf->{'mojo_hooks'} || $conf->{'mojo'}{'hooks'}
@@ -110,7 +111,7 @@ sub che_hooks {# Хуки из конфига
 
 }
 
-sub che_session {
+sub сессия {
   my $app = shift;
   my $conf = $app->config;
   my $session = $conf->{'mojo_session'} || $conf->{'mojo'}{'session'}
@@ -119,7 +120,7 @@ sub che_session {
   
 }
 
-sub che_routes {
+sub маршруты {
   my $app = shift;
   my $conf = $app->config;
   my $routes = $conf->{'routes'}
@@ -151,6 +152,14 @@ sub che_routes {
   }
 }
 
+sub спейсы {
+  my $app = shift;
+  my $conf = $app->config;
+  my $ns = $conf->{'namespaces'} || $conf->{'ns'}
+    || return;
+  push @{$app->routes->namespaces}, @$ns;
+}
+
 1;
 
 =pod
@@ -165,7 +174,7 @@ sub che_routes {
 
 =head1 VERSION
 
-0.002
+0.003
 
 =head1 NAME
 
@@ -178,7 +187,7 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   sub startup {
     my $app = shift;
     $app->plugin(Config =>{file => 'Config.pm'});
-    $app->che_go();
+    $app->поехали();
   }
   __PACKAGE__->new()->start();
 
@@ -203,7 +212,7 @@ Mojolicious::Che - Мой базовый модуль для приложени�
       #~ ['HeaderCondition'],
       #~ ['ParamsArray'],
   ],
-  mojo_session => {cookie_name => 'SESS'},
+  mojo_session => {cookie_name => 'ELK'},
   # Хуки
   mojo_hooks=>{
     #~ before_dispatch => sub {1;},
@@ -245,11 +254,51 @@ Mojolicious::Che - Мой базовый модуль для приложени�
       now => "select now();"
     },
   },
+  namespaces => [],
   routes => [
     [get=>'/', to=> {cb=>sub{shift->render(format=>'txt', text=>'Hello!');},}],
   ]
   };
 
+=head1 METHODS
+
+Mojolicious::Che inherits all methods from Mojolicious and implements the following new ones.
+
+=head2 поехали
+
+Top-level method. Setup the B<secrets>, B<mode>, B<log level> from app->config(). Then invoke all other metods below.
+
+=head2 хазы
+
+Has
+
+=head2 базы
+
+DBI handlers
+
+=head2 запросы
+
+DBI statements
+
+=head2 плугины
+
+Plugins
+
+=head2 хуки
+
+Hooks
+
+=head2 сессия
+
+Session
+
+=head2 спейсы
+
+Namespases
+
+=head2 маршруты
+
+Routes
 
 =head1 SEE ALSO
 

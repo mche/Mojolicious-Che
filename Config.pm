@@ -26,7 +26,7 @@ Config.pm - Пример конфига для Mojolicious::Che приложен
       #~ ['HeaderCondition'],
       #~ ['ParamsArray'],
   ],
-  mojo_session => {cookie_name => 'SESS'},
+  mojo_session => {cookie_name => 'ELK'},
   # Хуки
   mojo_hooks=>{
     #~ before_dispatch => sub {1;},
@@ -68,6 +68,6 @@ SQL
     },
   },
 	routes => [
-    [get=>'/', to=> {cb=>sub{shift->render(format=>'txt', text=>'Hello!');},}],
+    [get=>'/', to=> {cb=>sub{shift->render(format=>'txt', text=>'Здорова!');},}],
   ]
 };
