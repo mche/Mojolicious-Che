@@ -7,7 +7,8 @@ sub che_go {
   my $app = shift;
   my $conf = $app->config;
   
-  $app->secrets($conf->{'mojo_secret'} || $conf->{'mojo_secrets'} || $conf->{'mojo'}{'secret'} || $conf->{'mojo'}{'secrets'} || [rand]);
+  my $secret = $conf->{'mojo_secret'} || $conf->{'mojo_secrets'} || $conf->{'mojo'}{'secret'} || $conf->{'mojo'}{'secrets'} || [rand];
+  $app->secrets($secret);
 
   $app->mode($conf->{'mojo_mode'} || $conf->{'mojo'}{'mode'} || 'development'); # Файл лога уже не переключишь
   $app->log->level( $conf->{'mojo_log_level'} || $conf->{'mojo'}{'log_level'} || 'debug');
@@ -18,6 +19,7 @@ sub che_go {
   $app->che_sth();
   $app->che_plugins();
   $app->che_hooks();
+  $app->che_session();
 
 }
 
@@ -92,14 +94,23 @@ sub che_sth {# обрабатывает sth конфига
 sub che_hooks {# Хуки из конфига
   my $app = shift;
   my $conf = $app->config;
-  my $hooks = $conf->{'mojo_hooks'} || $conf->{'mojo'}{'hooks'};
-  return unless $hooks;
+  my $hooks = $conf->{'mojo_hooks'} || $conf->{'mojo'}{'hooks'}
+     || return;
   while (my ($name, $sub) = each %$hooks) {
   #~ map {
     $app->hook($name => $sub);
     $app->log->debug("Applied hook [$name] from config");
   }
 
+}
+
+sub che_session {
+  my $app = shift;
+  my $conf = $app->config;
+  my $session = $conf->{'mojo_session'} || $conf->{'mojo'}{'session'}
+    || return;
+  $app->sessions->cookie_name($cong->{'cookie_name'});
+  
 }
 1;
 
@@ -146,13 +157,14 @@ sub che_hooks {# Хуки из конфига
       #~ ['HeaderCondition'],
       #~ ['ParamsArray'],
   ],
+  mojo_session => {cookie_name => 'SESS'},
   # Хуки
   mojo_hooks=>{
     #~ before_dispatch => sub {1;},
   },
   # Хазы 
   mojo_has => {
-    foo => sub {my $app = shift; return 'bar';},
+    foo => sub {my $app = shift; return 'bar!';},
   },
   mojo_secrets => ['true 123 my app',],
   dbh=>{# will be as has!
@@ -192,7 +204,7 @@ sub che_hooks {# Хуки из конфига
 
 =head1 SEE ALSO
 
-L<>
+L<Ado>
 
 L<>
 
