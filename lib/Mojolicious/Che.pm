@@ -110,18 +110,18 @@ sub che_session {
   my $conf = $app->config;
   my $session = $conf->{'mojo_session'} || $conf->{'mojo'}{'session'}
     || return;
-  $app->sessions->cookie_name($cong->{'cookie_name'});
+  $app->sessions->cookie_name($conf->{'cookie_name'});
   
 }
 
 sub che_routes {
   my $app = shift;
   my $conf = $app->config;
-  my $routes = $config->{'routes'}
+  my $routes = $conf->{'routes'}
     or return;
-  $app_routes = $app->routes;
+  my $app_routes = $app->routes;
   my $apply_route = sub {
-    $r = shift || $app_routes;
+    my $r = shift || $app_routes;
     my ($meth, $arg) = @_;
     my $nr;
     if (my $m = $r->can($meth)) {
@@ -138,7 +138,7 @@ sub che_routes {
     my $nr = $apply_route->($app_routes, @$r[0,1])
       or next;
     for( my $i = 2; $i < @$r; $i += 2 ) {
-      $nr = $apply_route->($nr, @$r[$i, $i+1]; # method
+      $nr = $apply_route->($nr, @$r[$i, $i+1]); # method
     }
   }
 }
