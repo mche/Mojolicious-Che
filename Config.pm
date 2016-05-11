@@ -11,7 +11,7 @@
 
 =head1 NAME
 
-Пример конфига для Mojolicious::Che приложения
+Config.pm - Пример конфига для Mojolicious::Che приложения
 
 
 =cut

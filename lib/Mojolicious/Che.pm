@@ -253,9 +253,9 @@ Mojolicious::Che - Мой базовый модуль для приложени�
 
 =head1 SEE ALSO
 
-L<Ado>
+L<Mojolicious>
 
-L<>
+L<Ado>
 
 =head1 AUTHOR
 
