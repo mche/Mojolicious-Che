@@ -2,7 +2,7 @@ use strict;
 use warnings;
 use utf8;
 
-use Test::More tests => 21;
+use Test::More tests => 1;
  
 use_ok('Mojolicious::Che');
 use_ok('Test::Mojo');
@@ -18,7 +18,7 @@ sub startup {
 
 my $t = Test::Mojo->new;
  
-$t->get_ok('/')->status_is(200)->content_is('index page');
-$t->get_ok('/authonly')->status_is(200)->content_is('not authenticated');
-$t->get_ok('/condition/authonly')->status_is(404);
+$t->get_ok('/')->status_is(200)->content_is('Hello!');
+#~ $t->get_ok('/authonly')->status_is(200)->content_is('not authenticated');
+#~ $t->get_ok('/condition/authonly')->status_is(404);
 

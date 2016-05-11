@@ -28,7 +28,7 @@ sub che_has { # Хазы из конфига
   my $conf = $app->config;
   my $h = $conf->{'mojo_has'} || $conf->{'mojo'}{'has'};
   map {
-    $app->debug('debug', "Apply has [$_]");
+    $app->log->debug("Apply has [$_]");
     has $_ => $h->{$_};
   } keys %$h;
 }
@@ -36,8 +36,12 @@ sub che_has { # Хазы из конфига
 sub che_plugins {# Плугины из конфига
   my $app = shift;
   my $conf = $app->config;
-  map {$app->plugin(@$_);}
-    @{$conf->{'mojo_plugins'} || $conf->{'mojo'}{'plugins'} };
+  my $plugins = $conf->{'mojo_plugins'} || $conf->{'mojo'}{'plugins'}
+    || return;
+  map {
+    $app->plugin(@$_);
+    $app->log->debug("Enable plugin [$_[0]]");
+  } @$plugins;
 }
 
 sub che_dbh {# обрабатывает dbh конфига
@@ -138,7 +142,8 @@ sub che_routes {
     my $nr = $apply_route->($app_routes, @$r[0,1])
       or next;
     for( my $i = 2; $i < @$r; $i += 2 ) {
-      $nr = $apply_route->($nr, @$r[$i, $i+1]); # method
+      $nr = $apply_route->($nr, @$r[$i, $i+1])
+        or next;
     }
   }
 }
@@ -237,6 +242,9 @@ Mojolicious::Che - Мой базовый модуль для приложени�
       now => "select now();"
     },
   },
+  routes => [
+    [get=>'/', to=> {cb=>sub{shift->render(format=>'txt', text=>'Hello!');},}],
+  ]
   };
 
 
