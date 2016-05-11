@@ -3,7 +3,10 @@ lib/Mojolicious/Che.pm
 Makefile.PL
 MANIFEST			This list of files
 README
+README.pod
+Config.pm
 t/00-load.t
+t/01-main.t
 t/manifest.t
 t/pod-coverage.t
 t/pod.t

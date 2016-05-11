@@ -8,7 +8,7 @@ WriteMakefile(
     AUTHOR           => q{Михаил Че <mche@cpan.org>},
     VERSION_FROM     => 'lib/Mojolicious/Che.pm',
     ABSTRACT_FROM    => 'lib/Mojolicious/Che.pm',
-    LICENSE          => 'artistic_2',
+    LICENSE          => 'perl',
     PL_FILES         => {},
     MIN_PERL_VERSION => 5.006,
     CONFIGURE_REQUIRES => {
@@ -22,5 +22,5 @@ WriteMakefile(
         #'Foo::Bar::Module' => 5.0401,
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
-    clean => { FILES => 'Mojolicious-Che-*' },
+    #clean => { FILES => 'Mojolicious-Che-*' },
 );

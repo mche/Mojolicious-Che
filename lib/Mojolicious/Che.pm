@@ -36,7 +36,8 @@ sub che_has { # Хазы из конфига
 sub che_plugins {# Плугины из конфига
   my $app = shift;
   my $conf = $app->config;
-  map {$app->plugin(@$_);} @{$conf->{'mojo_plugins'} || $conf->{'mojo'}{'plugins'} };
+  map {$app->plugin(@$_);}
+    @{$conf->{'mojo_plugins'} || $conf->{'mojo'}{'plugins'} };
 }
 
 sub che_dbh {# обрабатывает dbh конфига
@@ -60,7 +61,7 @@ sub che_dbh {# обрабатывает dbh конфига
     } @{$opt->{do}} if $opt->{do};
     
     while (my ($st, $sql) = each %{$opt->{sth}}) {
-      $sth ||= {
+      $sth ||= do {
         has sth => sub {{};}
           unless $app->can('sth');
         $app->sth;
@@ -112,6 +113,36 @@ sub che_session {
   $app->sessions->cookie_name($cong->{'cookie_name'});
   
 }
+
+sub che_routes {
+  my $app = shift;
+  my $conf = $app->config;
+  my $routes = $config->{'routes'}
+    or return;
+  $app_routes = $app->routes;
+  my $apply_route = sub {
+    $r = shift || $app_routes;
+    my ($meth, $arg) = @_;
+    my $nr;
+    if (my $m = $r->can($meth)) {
+      $nr = $r->$m($arg) unless ref($arg);
+      $nr = $r->$m(@$arg) if ref($arg) eq 'ARRAY';
+      $nr = $r->$m(%$arg) if ref($arg) eq 'HASH';
+    }  else {
+      $app->log->warn("Can't method [$meth] for route",);
+    }
+    return $nr;
+  };
+  
+  for my $r (@$routes) {
+    my $nr = $apply_route->($app_routes, @$r[0,1])
+      or next;
+    for( my $i = 2; $i < @$r; $i += 2 ) {
+      $nr = $apply_route->($nr, @$r[$i, $i+1]; # method
+    }
+  }
+}
+
 1;
 
 =pod
@@ -130,7 +161,7 @@ sub che_session {
 
 =head1 NAME
 
-Мой базовый модуль для приложений Mojolicious. Нужен только развернутый конфиг.
+Mojolicious::Che - Мой базовый модуль для приложений Mojolicious. Нужен только развернутый конфиг.
 
 =head1 SYNOPSIS
 
@@ -148,12 +179,19 @@ sub che_session {
 
   {
   'Проект'=>'Тест-проект',
+  # mojo => {
+    # mode=>...,
+    # log_level => ...,
+    # secrets => ...,
+    # plugins=> ...,
+    # session => ...,
+    # hooks => ...,
+    # has => ...,
+  # },
   mojo_mode=> 'development',
   mojo_log_level => 'debug',
   mojo_plugins=>[ 
-      #~ ['PODRenderer'], # Documentation browser under "/perldoc"
       [charset => { charset => 'UTF-8' }, ],
-      ['EDumper', helper =>'dumper'],
       #~ ['HeaderCondition'],
       #~ ['ParamsArray'],
   ],
@@ -167,6 +205,7 @@ sub che_session {
     foo => sub {my $app = shift; return 'bar!';},
   },
   mojo_secrets => ['true 123 my app',],
+  
   dbh=>{# will be as has!
     'main' => {
       # DBI->connect(dsn, user, passwd, $attrs)
@@ -181,19 +220,18 @@ sub che_session {
       }],
       # will do on connect
       do => ['set datestyle to "ISO, DMY";',],
-      # prepared sth will get $app->sth->{<dbh name>}{<sth name>}
+      # prepared sth will be as has $app->sth->{<dbh name>}{<sth name>}
       sth => {
         foo => <<SQL,
   select * 
   from foo
   where
-    ...
-  ;
+    bar = ?;
   SQL
       },
     }
   },
-  # prepared sth will get $app->sth->{<dbh name>}{<sth name>}
+  # prepared sth will be as has $app->sth->{<dbh name>}{<sth name>}
   sth => {
     main => {
       now => "select now();"
