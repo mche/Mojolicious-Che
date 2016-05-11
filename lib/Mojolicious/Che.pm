@@ -20,6 +20,7 @@ sub che_go {
   $app->che_plugins();
   $app->che_hooks();
   $app->che_session();
+  $app->che_routes();
 
 }
 
@@ -28,7 +29,7 @@ sub che_has { # Хазы из конфига
   my $conf = $app->config;
   my $h = $conf->{'mojo_has'} || $conf->{'mojo'}{'has'};
   map {
-    $app->log->debug("Apply has [$_]");
+    $app->log->debug("Make the app->has('$_')");
     has $_ => $h->{$_};
   } keys %$h;
 }
@@ -40,7 +41,7 @@ sub che_plugins {# Плугины из конфига
     || return;
   map {
     $app->plugin(@$_);
-    $app->log->debug("Enable plugin [$_[0]]");
+    $app->log->debug("Enable plugin [$_->[0]]");
   } @$plugins;
 }
 
@@ -58,7 +59,7 @@ sub che_dbh {# обрабатывает dbh конфига
   
   while (my ($db, $opt) = each %$c_dbh) {
     $dbh->{$db} ||= DBI->connect(@{$opt->{connect}});
-    $app->log->debug("Соединился с базой [$opt->{connect}[0]]");
+    $app->log->debug("Соединился с базой $opt->{connect}[0] app->dbh->{'$db'}");
     
     map {
       $dbh->{$db}->do($_);
@@ -132,6 +133,7 @@ sub che_routes {
       $nr = $r->$m($arg) unless ref($arg);
       $nr = $r->$m(@$arg) if ref($arg) eq 'ARRAY';
       $nr = $r->$m(%$arg) if ref($arg) eq 'HASH';
+      
     }  else {
       $app->log->warn("Can't method [$meth] for route",);
     }
@@ -141,6 +143,7 @@ sub che_routes {
   for my $r (@$routes) {
     my $nr = $apply_route->($app_routes, @$r[0,1])
       or next;
+    $app->log->debug("Apply route [$r->[0] $r->[1]]");
     for( my $i = 2; $i < @$r; $i += 2 ) {
       $nr = $apply_route->($nr, @$r[$i, $i+1])
         or next;
