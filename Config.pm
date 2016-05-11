@@ -67,7 +67,8 @@ SQL
       now => "select now();"
     },
   },
-	routes => [
+  namespaces=>[],
+  routes => [
     [get=>'/', to=> {cb=>sub{shift->render(format=>'txt', text=>'Здорова!');},}],
   ]
 };
