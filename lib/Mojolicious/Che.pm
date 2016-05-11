@@ -1,7 +1,7 @@
 package Mojolicious::Che;
 use Mojo::Base 'Mojolicious';
 
-our $VERSION = '0.001';
+our $VERSION = '0.002';
 
 sub che_go {
   my $app = shift;
@@ -115,7 +115,7 @@ sub che_session {
   my $conf = $app->config;
   my $session = $conf->{'mojo_session'} || $conf->{'mojo'}{'session'}
     || return;
-  $app->sessions->cookie_name($conf->{'cookie_name'});
+  $app->sessions->cookie_name($session->{'cookie_name'});
   
 }
 
@@ -165,7 +165,7 @@ sub che_routes {
 
 =head1 VERSION
 
-0.001
+0.002
 
 =head1 NAME
 
