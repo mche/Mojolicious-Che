@@ -19,7 +19,7 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   sub startup {
     my $app = shift;
     $app->plugin(Config =>{file => 'Config.pm'});
-    $app->che_go();
+    $app->поехали();
   }
   __PACKAGE__->new()->start();
 
