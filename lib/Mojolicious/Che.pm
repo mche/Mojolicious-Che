@@ -1,7 +1,7 @@
 package Mojolicious::Che;
 use Mojo::Base 'Mojolicious';
 
-our $VERSION = '0.004';
+our $VERSION = '0.005';
 
 sub поехали {
   my $app = shift;
@@ -132,6 +132,7 @@ sub маршруты {
     my $nr;
     if (my $m = $r->can($meth)) {
       $nr = $r->$m($arg) unless ref($arg);
+      $nr = $r->$m($arg) if ref($arg) eq 'CODE';
       $nr = $r->$m(@$arg) if ref($arg) eq 'ARRAY';
       $nr = $r->$m(%$arg) if ref($arg) eq 'HASH';
       
@@ -174,7 +175,7 @@ sub спейсы {
 
 =head1 VERSION
 
-0.004
+0.005
 
 =head1 NAME
 
