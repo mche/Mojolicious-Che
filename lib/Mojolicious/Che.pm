@@ -1,13 +1,17 @@
 package Mojolicious::Che;
 use Mojo::Base 'Mojolicious';
 
-our $VERSION = '0.006';
+our $VERSION = '0.007';
 
 sub поехали {
   my $app = shift;
   my $conf = $app->config;
   
-  my $secret = $conf->{'mojo_secret'} || $conf->{'mojo_secrets'} || $conf->{'mojo'}{'secret'} || $conf->{'mojo'}{'secrets'} || $conf->{'шифры'} ||[rand];
+  my $defaults = $conf->{'mojo_defaults'} || $conf->{'mojo'}{'defaults'};
+  $app->defaults($defaults)
+    if $defaults;
+  
+  my $secret = $conf->{'mojo_secret'} || $conf->{'mojo_secrets'} || $conf->{'mojo'}{'secret'} || $conf->{'mojo'}{'secrets'} || $conf->{'шифры'} || [rand];
   $app->secrets($secret);
 
   $app->mode($conf->{'mojo_mode'} || $conf->{'mojo'}{'mode'} || 'development'); # Файл лога уже не переключишь
@@ -175,7 +179,7 @@ sub спейсы {
 
 =head1 VERSION
 
-0.006
+0.007
 
 =head1 NAME
 
@@ -200,14 +204,17 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   {
   'Проект'=>'Тест-проект',
   # mojo => {
-    # secrets => ...,
-    # mode=>...,
-    # log_level => ...,
-    # session => ...,
-    # has => ...,
-    # plugins=> ...,
-    # hooks => ...,
+    # defaults =>
+    # secrets =>
+    # mode=>
+    # log_level =>
+    # session =>
+    # has =>
+    # plugins=>
+    # hooks =>
   # },
+  # Default values for "stash" in Mojolicious::Controller, assigned for every new request.
+  mojo_defaults => {layout=>'default',},
   # 'шифры' => [
   mojo_secrets => ['true 123 my app',],
   mojo_mode=> 'development',
@@ -280,7 +287,7 @@ All methods has nothing on input.
 
 =head2 поехали()
 
-Top-level method. Setup the B<secrets>, B<mode>, B<log level> from app->config(). Then invoke all other metods in order below.
+Top-level method. Setup the B<defaults>, B<secrets>, B<mode>, B<log level> from app->config(). Then invoke all other metods in order below.
 
 =head2 сессия()
 
