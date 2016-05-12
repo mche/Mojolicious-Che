@@ -19,24 +19,33 @@ Config.pm - Пример конфига для Mojolicious::Che приложен
 
 {
   'Проект'=>'Тест-проект',
+  # mojo => {
+    # mode=>...,
+    # log_level => ...,
+    # secrets => ...,
+    # plugins=> ...,
+    # session => ...,
+    # hooks => ...,
+    # has => ...,
+  # },
   mojo_mode=> 'development',
   mojo_log_level => 'debug',
-  mojo_plugins=>[ 
+  'плугины'=>[ 
       [charset => { charset => 'UTF-8' }, ],
       #~ ['HeaderCondition'],
       #~ ['ParamsArray'],
   ],
-  mojo_session => {cookie_name => 'ELK'},
+  'сессия'=> {cookie_name => 'ELK'},
+  'шифры' => ['true 123 my app',],
   # Хуки
-  mojo_hooks=>{
+  'хуки'=>{
     #~ before_dispatch => sub {1;},
   },
   # Хазы 
-  mojo_has => {
+  'хазы' => {
     foo => sub {my $app = shift; return 'bar!';},
   },
-  mojo_secrets => ['true 123 my app',],
-  dbh=>{# will be as has!
+  'базы'=>{# will be as has!
     'main' => {
       # DBI->connect(dsn, user, passwd, $attrs)
       connect => ["DBI:Pg:dbname=test;", "guest", undef, {
@@ -62,13 +71,13 @@ SQL
     }
   },
   # prepared sth will get $app->sth->{<dbh name>}{<sth name>}
-  sth => {
+  'запросы' => {
     main => {
       now => "select now();"
     },
   },
-  namespaces=>[],
-  routes => [
+  'спейсы'=>[],
+  'маршруты' => [
     [get=>'/', to=> {cb=>sub{shift->render(format=>'txt', text=>'Здорова!');},}],
   ]
 };

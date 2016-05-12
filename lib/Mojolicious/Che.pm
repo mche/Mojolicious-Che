@@ -1,25 +1,25 @@
 package Mojolicious::Che;
 use Mojo::Base 'Mojolicious';
 
-our $VERSION = '0.003';
+our $VERSION = '0.004';
 
 sub поехали {
   my $app = shift;
   my $conf = $app->config;
   
-  my $secret = $conf->{'mojo_secret'} || $conf->{'mojo_secrets'} || $conf->{'mojo'}{'secret'} || $conf->{'mojo'}{'secrets'} || [rand];
+  my $secret = $conf->{'mojo_secret'} || $conf->{'mojo_secrets'} || $conf->{'mojo'}{'secret'} || $conf->{'mojo'}{'secrets'} || $conf->{'шифры'} ||[rand];
   $app->secrets($secret);
 
   $app->mode($conf->{'mojo_mode'} || $conf->{'mojo'}{'mode'} || 'development'); # Файл лога уже не переключишь
   $app->log->level( $conf->{'mojo_log_level'} || $conf->{'mojo'}{'log_level'} || 'debug');
   #~ warn "Mode: ", $app->mode, "; log level: ", $app->log->level;
   
+  $app->сессия();
   $app->хазы();
   $app->базы();
   $app->запросы();
   $app->плугины();
   $app->хуки();
-  $app->сессия();
   $app->спейсы();
   $app->маршруты();
 
@@ -28,7 +28,7 @@ sub поехали {
 sub хазы { # Хазы из конфига
   my $app = shift;
   my $conf = $app->config;
-  my $h = $conf->{'mojo_has'} || $conf->{'mojo'}{'has'};
+  my $h = $conf->{'mojo_has'} || $conf->{'mojo'}{'has'} || $conf->{'хазы'};
   map {
     $app->log->debug("Make the app->has('$_')");
     has $_ => $h->{$_};
@@ -38,7 +38,7 @@ sub хазы { # Хазы из конфига
 sub плугины {# Плугины из конфига
   my $app = shift;
   my $conf = $app->config;
-  my $plugins = $conf->{'mojo_plugins'} || $conf->{'mojo'}{'plugins'}
+  my $plugins = $conf->{'mojo_plugins'} || $conf->{'mojo'}{'plugins'} || $conf->{'плугины'}
     || return;
   map {
     $app->plugin(@$_);
@@ -49,7 +49,7 @@ sub плугины {# Плугины из конфига
 sub базы {# обрабатывает dbh конфига
   my $app = shift;
   my $conf = $app->config;
-  my $c_dbh = $conf->{dbh};
+  my $c_dbh = $conf->{dbh} || $conf->{'базы'};
   return unless $c_dbh && ref($c_dbh) eq 'HASH' && keys %$c_dbh;
   has dbh => sub {{};}
     unless $app->can('dbh');
@@ -83,7 +83,7 @@ sub базы {# обрабатывает dbh конфига
 sub запросы {# обрабатывает sth конфига
   my $app = shift;
   my $conf = $app->config;
-  my $c_sth = $conf->{sth};
+  my $c_sth = $conf->{sth} || $conf->{'запросы'};
   return unless $c_sth && ref($c_sth) eq 'HASH' && keys %$c_sth;
   my $dbh = $app->dbh;
   my $sth = $app->sth;
@@ -101,7 +101,7 @@ sub запросы {# обрабатывает sth конфига
 sub хуки {# Хуки из конфига
   my $app = shift;
   my $conf = $app->config;
-  my $hooks = $conf->{'mojo_hooks'} || $conf->{'mojo'}{'hooks'}
+  my $hooks = $conf->{'mojo_hooks'} || $conf->{'mojo'}{'hooks'} || $conf->{'хуки'}
      || return;
   while (my ($name, $sub) = each %$hooks) {
   #~ map {
@@ -114,7 +114,7 @@ sub хуки {# Хуки из конфига
 sub сессия {
   my $app = shift;
   my $conf = $app->config;
-  my $session = $conf->{'mojo_session'} || $conf->{'mojo'}{'session'}
+  my $session = $conf->{'mojo_session'} || $conf->{'mojo'}{'session'} || $conf->{'сессия'}
     || return;
   $app->sessions->cookie_name($session->{'cookie_name'});
   
@@ -123,7 +123,7 @@ sub сессия {
 sub маршруты {
   my $app = shift;
   my $conf = $app->config;
-  my $routes = $conf->{'routes'}
+  my $routes = $conf->{'routes'} || $conf->{'маршруты'}
     or return;
   my $app_routes = $app->routes;
   my $apply_route = sub {
@@ -155,7 +155,7 @@ sub маршруты {
 sub спейсы {
   my $app = shift;
   my $conf = $app->config;
-  my $ns = $conf->{'namespaces'} || $conf->{'ns'}
+  my $ns = $conf->{'namespaces'} || $conf->{'ns'} || $conf->{'спейсы'}
     || return;
   push @{$app->routes->namespaces}, @$ns;
 }
@@ -174,7 +174,7 @@ sub спейсы {
 
 =head1 VERSION
 
-0.003
+0.004
 
 =head1 NAME
 
@@ -194,36 +194,34 @@ Mojolicious::Che - Мой базовый модуль для приложени�
 
 =head1 Config file
 
+Порядок строк в этом конфиге соответствует исполнению в модуле!
+
   {
   'Проект'=>'Тест-проект',
   # mojo => {
+    # secrets => ...,
     # mode=>...,
     # log_level => ...,
-    # secrets => ...,
-    # plugins=> ...,
     # session => ...,
-    # hooks => ...,
     # has => ...,
+    # plugins=> ...,
+    # hooks => ...,
   # },
+  # 'шифры' => [
+  mojo_secrets => ['true 123 my app',],
   mojo_mode=> 'development',
   mojo_log_level => 'debug',
-  mojo_plugins=>[ 
-      [charset => { charset => 'UTF-8' }, ],
-      #~ ['HeaderCondition'],
-      #~ ['ParamsArray'],
-  ],
+  # 'сессия' => 
   mojo_session => {cookie_name => 'ELK'},
-  # Хуки
-  mojo_hooks=>{
-    #~ before_dispatch => sub {1;},
-  },
-  # Хазы 
+  
+  # 'хазы' => 'Лет 500-700 назад был такой дикий степной торговый жадный народ ХАЗАРЫ. Столицей их "государства" был город Тьмутаракань, где-то на берегу Каспия. Потомки этих людей рассыпаны по странам России, Средней Азии, Европы. Есть мнение, что хазары присвоили себе название ЕВРЕИ, но это не те библейские евреи.'
   mojo_has => {
     foo => sub {my $app = shift; return 'bar!';},
   },
-  mojo_secrets => ['true 123 my app',],
   
-  dbh=>{# will be as has!
+  # 'базы' => 
+  # will be as has!
+  dbh=>{
     'main' => {
       # DBI->connect(dsn, user, passwd, $attrs)
       connect => ["DBI:Pg:dbname=test;", "postgres", undef, {
@@ -248,13 +246,27 @@ Mojolicious::Che - Мой базовый модуль для приложени�
       },
     }
   },
+  # 'запросы' => 
   # prepared sth will be as has $app->sth->{<dbh name>}{<sth name>}
   sth => {
     main => {
       now => "select now();"
     },
   },
+    
+  # 'плугины'=> [
+  mojo_plugins=>[ 
+      [charset => { charset => 'UTF-8' }, ],
+      #~ ['HeaderCondition'],
+      #~ ['ParamsArray'],
+  ],
+  # 'хуки' => 
+  mojo_hooks=>{
+    #~ before_dispatch => sub {1;},
+  },
+  # 'спейсы' => 
   namespaces => [],
+  # 'маршруты' => 
   routes => [
     [get=>'/', to=> {cb=>sub{shift->render(format=>'txt', text=>'Hello!');},}],
   ]
@@ -263,40 +275,41 @@ Mojolicious::Che - Мой базовый модуль для приложени�
 =head1 METHODS
 
 Mojolicious::Che inherits all methods from Mojolicious and implements the following new ones.
+All methods has nothing on input.
 
-=head2 поехали
+=head2 поехали()
 
-Top-level method. Setup the B<secrets>, B<mode>, B<log level> from app->config(). Then invoke all other metods below.
+Top-level method. Setup the B<secrets>, B<mode>, B<log level> from app->config(). Then invoke all other metods in order below.
 
-=head2 хазы
-
-Has
-
-=head2 базы
-
-DBI handlers
-
-=head2 запросы
-
-DBI statements
-
-=head2 плугины
-
-Plugins
-
-=head2 хуки
-
-Hooks
-
-=head2 сессия
+=head2 сессия()
 
 Session
 
-=head2 спейсы
+=head2 хазы()
+
+Has
+
+=head2 базы()
+
+DBI handlers (dbh)
+
+=head2 запросы()
+
+DBI statements (sth)
+
+=head2 плугины()
+
+Plugins
+
+=head2 хуки()
+
+Hooks
+
+=head2 спейсы()
 
 Namespases
 
-=head2 маршруты
+=head2 маршруты()
 
 Routes
 
