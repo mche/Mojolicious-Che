@@ -86,10 +86,12 @@ sub базы {# обрабатывает dbh конфига
 
 sub запросы {# обрабатывает sth конфига
   my $app = shift;
+  my $dbh = eval $app->dbh
+    or return;
   my $conf = $app->config;
   my $c_sth = $conf->{sth} || $conf->{'запросы'};
   return unless $c_sth && ref($c_sth) eq 'HASH' && keys %$c_sth;
-  my $dbh = $app->dbh;
+  
   my $sth = $app->sth;
   
   while (my ($db, $h) = each %$c_sth) {
