@@ -1,7 +1,7 @@
 package Mojolicious::Che;
 use Mojo::Base 'Mojolicious';
 
-our $VERSION = '0.008';
+our $VERSION = '0.008-exp';
 
 sub поехали {
   my $app = shift;
