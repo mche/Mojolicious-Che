@@ -30,22 +30,26 @@ Config.pm - Пример конфига для Mojolicious::Che приложен
   # },
   mojo_mode=> 'development',
   mojo_log_level => 'debug',
+  # plugins
   'плугины'=>[ 
       [charset => { charset => 'UTF-8' }, ],
       #~ ['HeaderCondition'],
       #~ ['ParamsArray'],
   ],
+  #mojo_session
   'сессия'=> {cookie_name => 'ELK'},
+  #mojo_secret
   'шифры' => ['true 123 my app',],
-  # Хуки
+  # hooks
   'хуки'=>{
     #~ before_dispatch => sub {1;},
   },
-  # Хазы 
+  # has
   'хазы' => {
     foo => sub {my $app = shift; return 'bar!';},
   },
-  'базы'=>{# will be as has!
+  # dbh
+  'базы000'=>{# will be as has dbh!
     'main' => {
       # DBI->connect(dsn, user, passwd, $attrs)
       connect => ["DBI:Pg:dbname=test;", "guest", undef, {
@@ -70,13 +74,16 @@ SQL
       },
     }
   },
+  # sth 
   # prepared sth will get $app->sth->{<dbh name>}{<sth name>}
   'запросы' => {
     main => {
       now => "select now();"
     },
   },
+  # ns | namespaces
   'спейсы'=>[],
+  # routes
   'маршруты' => [
     [get=>'/', to=> {cb=>sub{shift->render(format=>'txt', text=>'Здорова!');},}],
   ]
