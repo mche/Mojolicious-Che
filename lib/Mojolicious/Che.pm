@@ -1,7 +1,7 @@
 package Mojolicious::Che;
 use Mojo::Base 'Mojolicious';
 
-our $VERSION = '0.008-exp';
+our $VERSION = '0.008';
 
 sub поехали {
   my $app = shift;
@@ -45,7 +45,7 @@ sub плугины {# Плугины из конфига
   my $plugins = $conf->{'mojo_plugins'} || $conf->{'mojo'}{'plugins'} || $conf->{'плугины'}
     || return;
   map {
-    ref $_->[1] eq 'CODE' ? $app->plugin($_->[0] => $app->$_->[1]()) : $app->plugin(@$_);
+    ref $_->[1] eq 'CODE' ? $app->plugin($_->[0] => $app->${ \$_->[1] }) : $app->plugin(@$_);
     $app->log->debug("Enable plugin [$_->[0]]");
   } @$plugins;
 }
