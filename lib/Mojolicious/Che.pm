@@ -86,7 +86,7 @@ sub базы {# обрабатывает dbh конфига
 
 sub запросы {# обрабатывает sth конфига
   my $app = shift;
-  my $dbh = eval $app->dbh
+  my $dbh = eval { $app->dbh }
     or return;
   my $conf = $app->config;
   my $c_sth = $conf->{sth} || $conf->{'запросы'};
