@@ -194,9 +194,13 @@ sub Mojolicious::Routes::is_hidden {
 
 Mojolicious::Che - Мой базовый модуль для приложений Mojolicious. Нужен только развернутый конфиг.
 
+=head1 Важно
+
+Пропатчен метод C< sub Mojolicious::Routes::is_hidden > поэтому действия в маршрутах разрешены не только латиницей.
+
 =head1 SYNOPSIS
 
-  use Mojo::Base 'Mojolicious::Che';
+  use Mojo::Base::Che 'Mojolicious::Che';
   
   sub startup {
     my $app = shift;

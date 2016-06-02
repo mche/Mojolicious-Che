@@ -174,11 +174,15 @@ Mojo::Base::Che - use Mojo::Base::Che 'SomeBaseClass',-lib, qw(rel/path/lib /abs
 
 =head1 DESCR
 
+Чистая копия L<Mojo::Base> и небольшие патчи.
 
+=head2 Причины патчей
+
+1. Добавление путей в @INC;
+
+2. Разрешены хазы не латиницей;
 
 =head1 SYNOPSIS
-
-Based on L<Mojo::Base> where you found three forms usage.
 
 This module provide a fourth extended form for add extra lib directories to perl's search path. See <lib>
 
@@ -188,6 +192,8 @@ This module provide a fourth extended form for add extra lib directories to perl
   use Mojo::Base::Che -strict, qw(-lib lib1 lib2);
   use Mojo::Base::Che qw(-base -lib lib1 lib2);
   use Mojo::Base::Che 'SomeBaseClass', qw(-lib lib1 lib2);
+  
+  has qw(хаз);
 
 For relative lib path will use L<FindBin> module and C<$FindBin::Bin> is prepends to that lib.
 Libs always applied first even its last on flags list.
