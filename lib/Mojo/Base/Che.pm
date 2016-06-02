@@ -63,7 +63,62 @@ sub attr {
 
 sub import {
   my $class = shift;
-  return unless my $flag = shift;
+  #~ return unless my $flag = shift;
+  
+  my ($flag, $findbin,);
+  my @flags = ();
+  my @libs = ();
+
+  # parse flags
+  while ((my $it = shift) || @_) {
+    unshift @_, @$it
+      and next
+      if ref $it eq 'ARRAY';
+    
+    next 
+      unless defined($it) && $it =~ m'/|\w';# /  root lib? lets
+    
+    # controll flag
+    if ($it =~ s'^(-\w+)'') {
+      
+      $flag = $1;
+      push @flags, $flag
+        and next
+        unless $flag eq '-lib';
+      
+      unshift @_, split m'[:;]+', $it # -lib:foo;bar
+        if $it;
+      
+      next;
+      
+    } else { # non controll
+      
+      push @flags, $it
+        and next
+        unless $flag && $flag eq '-lib';# non lib items
+      
+    }
+    
+    # abs lib
+    push @libs, $it
+      and next
+      if $it =~ m'^/';
+    
+    # relative lib
+    $findbin ||= do {
+      require FindBin;
+      $FindBin::Bin;
+    };
+    push @libs, $findbin.'/'.$it;
+  }
+  
+  if ( @libs && (my @ok_libs = grep{ my $lib = $_; not scalar grep($lib eq $_, @INC) } @libs) ) {
+    require lib;
+    lib->import(@ok_libs);
+  }
+  
+  $flag = shift @flags
+    or return;
 
   # Base
   if ($flag eq '-base') { $flag = $class }
@@ -102,3 +157,60 @@ sub tap {
 }
 
 1;
+
+=pod
+
+=encoding utf8
+
+Доброго всем
+
+=head1 Mojo::Base::Che
+
+¡ ¡ ¡ ALL GLORY TO GLORIA ! ! !
+
+=head1 NAME
+
+Mojo::Base::Che - use Mojo::Base::Che 'SomeBaseClass',-lib, qw(rel/path/lib /abs/path/lib);
+
+=head1 DESCR
+
+
+
+=head1 SYNOPSIS
+
+Based on L<Mojo::Base> where you found three forms usage.
+
+This module provide a fourth extended form for add extra lib directories to perl's search path. See <lib>
+
+  use Mojo::Base::Che -lib, qw(rel/path/lib /abs/path/lib);
+  use Mojo::Base::Che -lib, ['lib1', 'lib2'];
+  use Mojo::Base::Che '-lib:lib1:lib2;lib3';
+  use Mojo::Base::Che -strict, qw(-lib lib1 lib2);
+  use Mojo::Base::Che qw(-base -lib lib1 lib2);
+  use Mojo::Base::Che 'SomeBaseClass', qw(-lib lib1 lib2);
+
+For relative lib path will use L<FindBin> module and C<$FindBin::Bin> is prepends to that lib.
+Libs always applied first even its last on flags list.
+
+All three L<Mojo::Base> forms works also.
+
+=head1 SEE ALSO
+
+L<Mojo::Base>
+
+=head1 AUTHOR
+
+Михаил Че (Mikhail Che), C<< <mche[-at-]cpan.org> >>
+
+=head1 BUGS / CONTRIBUTING
+
+Please report any bugs or feature requests at L<https://github.com/mche/Mojolicious-Che/issues>.
+
+=head1 COPYRIGHT
+
+Copyright 2016 Mikhail Che.
+
+This library is free software; you can redistribute it and/or modify
+it under the same terms as Perl itself.
+
+=cut
