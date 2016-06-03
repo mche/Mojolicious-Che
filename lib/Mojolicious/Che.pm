@@ -1,7 +1,7 @@
 package Mojolicious::Che;
 use Mojo::Base 'Mojolicious';
 
-our $VERSION = '0.008';
+our $VERSION = '0.009';
 
 sub поехали {
   my $app = shift;
@@ -167,6 +167,13 @@ sub спейсы {
   push @{$app->routes->namespaces}, @$ns;
 }
 
+sub Mojolicious::Routes::is_hidden {
+  my ($self, $method) = @_;
+  my $h = $self->{hiding} ||= {map { $_ => 1 } @{$self->hidden}};
+  #~ return !!($h->{$method} || index($method, '_') == 0 || $method !~ /[a-z]/);
+  return !!($h->{$method} || index($method, '_') == 0);
+}
+
 1;
 
 =pod
@@ -181,7 +188,7 @@ sub спейсы {
 
 =head1 VERSION
 
-0.008
+0.009
 
 =head1 NAME
 
