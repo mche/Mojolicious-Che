@@ -167,11 +167,12 @@ sub спейсы {
   push @{$app->routes->namespaces}, @$ns;
 }
 
-sub Mojolicious::Routes::is_hidden {
+sub Mojolicious::Routes::is_hidden0000 {
   my ($self, $method) = @_;
   my $h = $self->{hiding} ||= {map { $_ => 1 } @{$self->hidden}};
   #~ return !!($h->{$method} || index($method, '_') == 0 || $method !~ /[a-z]/);
-  return !!($h->{$method} || index($method, '_') == 0);
+  #~ return !!($h->{$method} || index($method, '_') == 0);
+   return !!($h->{$method} || $method =~ /^_/ || $method =~ /^[A-Z_]+$/);
 }
 
 1;
