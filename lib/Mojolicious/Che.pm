@@ -1,7 +1,7 @@
 package Mojolicious::Che;
-use Mojo::Base::Che 'Mojolicious';
+use Mojo::Base 'Mojolicious';
 
-our $VERSION = '0.009';
+our $VERSION = '0.0099';
 
 sub поехали {
   my $app = shift;
@@ -188,7 +188,7 @@ sub Mojolicious::Routes::is_hidden {
 
 =head1 VERSION
 
-0.009
+0.0099
 
 =head1 NAME
 
