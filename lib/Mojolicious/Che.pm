@@ -1,5 +1,5 @@
 package Mojolicious::Che;
-use Mojo::Base 'Mojolicious';
+use Mojo::Base::Che 'Mojolicious';
 
 our $VERSION = '0.0099';
 
