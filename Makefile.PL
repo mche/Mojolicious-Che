@@ -19,7 +19,7 @@ WriteMakefile(
     },
     PREREQ_PM => {
         'Mojolicious'              => 6.00,
-        #'Foo::Bar::Module' => 5.0401,
+        'DBIx::POS::Template' => 0.01,
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     #clean => { FILES => 'Mojolicious-Che-*' },
