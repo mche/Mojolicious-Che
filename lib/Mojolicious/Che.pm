@@ -1,7 +1,15 @@
 package Mojolicious::Che;
 use Mojo::Base::Che 'Mojolicious';
 
-our $VERSION = '0.0099';
+our $VERSION = '0.010';
+
+=pod
+
+=head1 VERSION
+
+0.010
+
+=cut
 
 sub поехали {
   my $app = shift;
@@ -201,10 +209,6 @@ sub Mojolicious::Routes::is_hidden0000 {
 =head1 Mojolicious::Che
 
 ¡ ¡ ¡ ALL GLORY TO GLORIA ! ! !
-
-=head1 VERSION
-
-0.0099
 
 =head1 NAME
 
