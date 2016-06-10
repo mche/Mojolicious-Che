@@ -1,5 +1,6 @@
 package Mojolicious::Che;
 use Mojo::Base::Che 'Mojolicious';
+use Mojo::Loader qw(load_class);
 
 our $VERSION = '0.010';
 
@@ -96,9 +97,14 @@ sub запросы {# обрабатывает sth конфига
   my $app = shift;
   my $dbh = eval { $app->dbh }
     or return;
+  my %arg = @_;
   my $conf = $app->config;
-  my $c_sth = $conf->{sth} || $conf->{'запросы'};
-  return unless $c_sth && ref($c_sth) eq 'HASH' && keys %$c_sth;
+  
+  my $c_sth = $arg{sth} || $conf->{sth} || $conf->{'запросы'} || {};
+  my $c_pos = $arg{pos} || $conf->{pos} || $conf->{'посы'} || {};
+    
+  return unless ($c_sth && ref($c_sth) eq 'HASH' && keys %$c_sth)
+    || ($c_pos && ref($c_pos) eq 'HASH' && keys %$c_pos);
   
   my $sth = do {
     has sth => sub {{};}
@@ -113,13 +119,12 @@ sub запросы {# обрабатывает sth конфига
     }
   }
   
-  my $c_pos = $conf->{pos} || $conf->{'посы'} || {};
-  
+  $sth_pos;
   while (my ($db, $arr) = each %$c_pos) {
     for my $item (@$arr) {
-      my $pos_module = shift @$item;
-      require $pos_module;
-      $sth->{$db}{$module} = $sth_pos->new($dbh->{$db}, $pos_module->new(@$item));
+      $sth_pos ||= $app->_class('DBIx::POS::Sth');
+      my $pos_module = $app->_class(shift @$item);
+      $sth->{$db}{$pos_module} = $sth_pos->new($dbh->{$db}, $pos_module->new(@$item));
     }
   }
   
@@ -196,6 +201,15 @@ sub Mojolicious::Routes::is_hidden0000 {
   #~ return !!($h->{$method} || index($method, '_') == 0 || $method !~ /[a-z]/);
   #~ return !!($h->{$method} || index($method, '_') == 0);
    return !!($h->{$method} || $method =~ /^_/ || $method =~ /^[A-Z_]+$/);
+}
+
+sub _class {
+  my $self = shift;
+  my $class  = shift;
+  my $e;
+  $e = load_class($class)# success undef
+    and die $e;
+  return $class;
 }
 
 1;
