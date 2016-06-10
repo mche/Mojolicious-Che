@@ -2,13 +2,13 @@ package Mojolicious::Che;
 use Mojo::Base::Che 'Mojolicious';
 use Mojo::Loader qw(load_class);
 
-our $VERSION = '0.010';
+our $VERSION = '0.011';
 
 =pod
 
 =head1 VERSION
 
-0.010
+0.011
 
 =cut
 
@@ -125,6 +125,7 @@ sub запросы {# обрабатывает sth конфига
       $sth_pos ||= $app->_class('DBIx::POS::Sth');
       my $pos_module = $app->_class(shift @$item);
       $sth->{$db}{$pos_module} = $sth_pos->new($dbh->{$db}, $pos_module->new(@$item));
+      $app->log->debug("Создан STH из POS модуля [$pos_module]");
     }
   }
   
