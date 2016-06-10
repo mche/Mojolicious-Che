@@ -123,8 +123,8 @@ sub запросы {# обрабатывает sth конфига
   while (my ($db, $arr) = each %$c_pos) {
     for my $item (@$arr) {
       $sth_pos ||= $app->_class('DBIx::POS::Sth');
-      my $pos_module = $app->_class(shift @$item);
-      $sth->{$db}{$pos_module} = $sth_pos->new($dbh->{$db}, $pos_module->new(@$item));
+      my $pos_module = $app->_class(ref $item eq 'ARRAY' ? shift @$item : $item);
+      $sth->{$db}{$pos_module} = $sth_pos->new($dbh->{$db}, $pos_module->new(ref $item eq 'ARRAY' ? @$item : ()));
       $app->log->debug("Создан STH из POS модуля [$pos_module]");
     }
   }
