@@ -119,7 +119,7 @@ sub запросы {# обрабатывает sth конфига
     }
   }
   
-  $sth_pos;
+  my $sth_pos;
   while (my ($db, $arr) = each %$c_pos) {
     for my $item (@$arr) {
       $sth_pos ||= $app->_class('DBIx::POS::Sth');
