@@ -92,7 +92,11 @@ sub запросы {# обрабатывает sth конфига
   my $c_sth = $conf->{sth} || $conf->{'запросы'};
   return unless $c_sth && ref($c_sth) eq 'HASH' && keys %$c_sth;
   
-  my $sth = $app->sth;
+  my $sth = do {
+    has sth => sub {{};}
+      unless $app->can('sth');
+    $app->sth;
+  };
   
   while (my ($db, $h) = each %$c_sth) {
     while (my ($st, $sql) = each %$h) {
@@ -100,6 +104,17 @@ sub запросы {# обрабатывает sth конфига
       $app->log->debug("Подготовился запрос [app->sth->{$db}{$st}]");
     }
   }
+  
+  my $c_pos = $conf->{pos} || $conf->{'посы'} || {};
+  
+  while (my ($db, $arr) = each %$c_pos) {
+    for my $item (@$arr) {
+      my $pos_module = shift @$item;
+      require $pos_module;
+      $sth->{$db}{$module} = $sth_pos->new($dbh->{$db}, $pos_module->new(@$item));
+    }
+  }
+  
   $sth;
 }
 
@@ -274,6 +289,13 @@ Mojolicious::Che - Мой базовый модуль для приложени�
     main => {
       now => "select now();"
     },
+  },
+  # DBIx::POS::Sth
+  # will be as has $app->sth->{<dbh name>}{<POS module name>}->sth(<statement name>, ...)
+  pos => {
+    main => [# hashref
+      ['POS::Foo' => template => {var1=>1,}],
+    ],
   },
     
   # 'плугины'=> [
