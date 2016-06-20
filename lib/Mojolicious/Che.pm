@@ -72,8 +72,8 @@ sub базы {# обрабатывает dbh конфига
   
   my $req_dbi;
   while (my ($db, $opt) = each %$c_dbh) {
-    if (ref $opt eq 'DBI::db') {
-      $dbh->{$db} ||= $opt;
+    if ($opt->{dbh}) {# && ref $opt eq 'DBI::db'
+      $dbh->{$db} ||= $opt->{dbh};
     } else {
       ++$req_dbi
         and require DBI
@@ -281,9 +281,8 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   # 'базы' => 
   # will be as has!
   dbh=>{
-    'main' => 
-      # Dbh->dbh, # use Dbh; external defined dbh
-      {# DBI->connect(dsn, user, passwd, $attrs)
+    'main' => {
+      # DBI->connect(dsn, user, passwd, $attrs)
       connect => ["DBI:Pg:dbname=test;", "postgres", undef, {
         ShowErrorStatement => 1,
         AutoCommit => 1,
@@ -293,6 +292,8 @@ Mojolicious::Che - Мой базовый модуль для приложени�
         #mysql_enable_utf8 => 1,
         #mysql_auto_reconnect=>1,
       }],
+      # or use Foo::Dbh; external defined dbh
+      # dbh => Dbh->dbh,
       # will do on connect
       do => ['set datestyle to "ISO, DMY";',],
       # prepared sth will be as has $app->sth->{<dbh name>}{<sth name>}
