@@ -2,13 +2,13 @@ package Mojolicious::Che;
 use Mojo::Base::Che 'Mojolicious';
 use Mojo::Loader qw(load_class);
 
-our $VERSION = '0.011';
+our $VERSION = '0.012';
 
 =pod
 
 =head1 VERSION
 
-0.011
+0.012
 
 =cut
 
@@ -69,11 +69,18 @@ sub базы {# обрабатывает dbh конфига
   
   my $dbh = $app->dbh;
   my $sth;
-  require DBI;
   
+  my $req_dbi;
   while (my ($db, $opt) = each %$c_dbh) {
-    $dbh->{$db} ||= DBI->connect(@{$opt->{connect}});
-    $app->log->debug("Соединился с базой $opt->{connect}[0] app->dbh->{'$db'}");
+    if (ref $opt eq 'DBI::db') {
+      $dbh->{$db} ||= $opt;
+    } else {
+      ++$req_dbi
+        and require DBI
+        unless $req_dbi;
+      $dbh->{$db} ||= DBI->connect(@{$opt->{connect}});
+      $app->log->debug("Соединился с базой $opt->{connect}[0] app->dbh->{'$db'}");
+    }
     
     map {
       $dbh->{$db}->do($_);
@@ -219,9 +226,9 @@ sub _class {
 
 =encoding utf8
 
-Доброго всем
-
 =head1 Mojolicious::Che
+
+Доброго всем
 
 ¡ ¡ ¡ ALL GLORY TO GLORIA ! ! !
 
@@ -274,8 +281,9 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   # 'базы' => 
   # will be as has!
   dbh=>{
-    'main' => {
-      # DBI->connect(dsn, user, passwd, $attrs)
+    'main' => 
+      # Dbh->dbh, # use Dbh; external defined dbh
+      {# DBI->connect(dsn, user, passwd, $attrs)
       connect => ["DBI:Pg:dbname=test;", "postgres", undef, {
         ShowErrorStatement => 1,
         AutoCommit => 1,
@@ -316,8 +324,7 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   # 'плугины'=> [
   mojo_plugins=>[ 
       [charset => { charset => 'UTF-8' }, ],
-      #~ ['HeaderCondition'],
-      #~ ['ParamsArray'],
+      # or ['FooPlugin' => sub {...returns config hashref...}],
   ],
   # 'хуки' => 
   mojo_hooks=>{
