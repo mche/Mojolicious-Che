@@ -4,8 +4,8 @@ use strict;
 use warnings;
 use utf8;
 use feature ();
-#~ binmode(STDOUT, ":utf8");
-#~ binmode(STDERR, ":utf8");
+binmode(STDOUT, ":utf8");
+binmode(STDERR, ":utf8");
 
 # No imports because we get subclassed, a lot!
 use Carp ();
