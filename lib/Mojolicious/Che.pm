@@ -2,13 +2,13 @@ package Mojolicious::Che;
 use Mojo::Base::Che 'Mojolicious';
 use Mojo::Loader qw(load_class);
 
-our $VERSION = '0.013';
+our $VERSION = '0.020';
 
 =pod
 
 =head1 VERSION
 
-0.013
+0.020
 
 =cut
 
@@ -29,8 +29,8 @@ sub поехали {
   
   $app->сессия();
   $app->хазы();
-  $app->базы();
-  $app->запросы();
+  #~ $app->базы();
+  #~ $app->запросы();
   $app->плугины();
   $app->хуки();
   $app->спейсы();
@@ -59,16 +59,16 @@ sub плугины {# Плугины из конфига
   } @$plugins;
 }
 
-sub базы {# обрабатывает dbh конфига
+has dbh => sub {
+#~ sub базы {# обрабатывает dbh конфига
   my $app = shift;
   my $conf = $app->config;
   my $c_dbh = $conf->{dbh} || $conf->{'базы'};
   return unless $c_dbh && ref($c_dbh) eq 'HASH' && keys %$c_dbh;
-  has dbh => sub {{};}
-    unless $app->can('dbh');
+  #~ has dbh => sub {{};}
+    #~ unless $app->can('dbh');
   
-  my $dbh = $app->dbh;
-  my $sth;
+  my $dbh = {};
   
   my $req_dbi;
   while (my ($db, $opt) = each %$c_dbh) {
@@ -86,38 +86,36 @@ sub базы {# обрабатывает dbh конфига
       $dbh->{$db}->do($_);
     } @{$opt->{do}} if $opt->{do};
     
+
+  }
+  return $dbh;
+  
+};
+
+has sth => sub {
+
+#~ sub запросы {# обрабатывает sth конфига
+  my $app = shift;
+  my $dbh = eval { $app->dbh }
+    or return;
+  #~ my %arg = @_;
+  my $conf = $app->config;
+  
+  my $c_dbh = $conf->{dbh} || $conf->{'базы'};
+  my $c_sth = $conf->{sth} || $conf->{'запросы'} || {};
+  my $c_pos = $conf->{pos} || $conf->{'посы'} || {};
+    
+  return unless ($c_sth && ref($c_sth) eq 'HASH' && keys %$c_sth)
+    || ($c_pos && ref($c_pos) eq 'HASH' && keys %$c_pos);
+
+  my $sth = {};
+  
+  while (my ($db, $opt) = each %$c_dbh) {
     while (my ($st, $sql) = each %{$opt->{sth}}) {
-      $sth ||= do {
-        has sth => sub {{};}
-          unless $app->can('sth');
-        $app->sth;
-      };
       $sth->{$db}{$st} = $dbh->{$db}->prepare($sql);# $app->sth->{main}{...}
       $app->log->debug("Подготовился запрос [app->sth->{$db}{$st}]");
     }
   }
-  return $dbh, $sth;
-  
-}
-
-sub запросы {# обрабатывает sth конфига
-  my $app = shift;
-  my $dbh = eval { $app->dbh }
-    or return;
-  my %arg = @_;
-  my $conf = $app->config;
-  
-  my $c_sth = $arg{sth} || $conf->{sth} || $conf->{'запросы'} || {};
-  my $c_pos = $arg{pos} || $conf->{pos} || $conf->{'посы'} || {};
-    
-  return unless ($c_sth && ref($c_sth) eq 'HASH' && keys %$c_sth)
-    || ($c_pos && ref($c_pos) eq 'HASH' && keys %$c_pos);
-  
-  my $sth = do {
-    has sth => sub {{};}
-      unless $app->can('sth');
-    $app->sth;
-  };
   
   while (my ($db, $h) = each %$c_sth) {
     while (my ($st, $sql) = each %$h) {
@@ -137,7 +135,7 @@ sub запросы {# обрабатывает sth конфига
   }
   
   $sth;
-}
+};
 
   
 sub хуки {# Хуки из конфига
