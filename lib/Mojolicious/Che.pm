@@ -337,6 +337,23 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   ]
   };
 
+=head1 HAS's
+
+=head2 dbh
+
+Set DBI handlers from config B<dbh> (или B<базы>)
+
+=head2 sth
+
+Set prepared stattements from config B<sth> (или B<запросы>).
+
+Также есть опция конфига B<pos>, которая подгружает специальные POS-модули в app->sth. Пример:
+
+  pos => {main => [['POS::Foo' => template => {var1=>1,}],],},
+  pos => {main => {'POS::Foo' => template => {var1=>1,},},},
+  # далее получение запросов
+  my $sth = $app->sth->{main}{'POS::Foo'}->sth('foo st', ...);
+
 =head1 METHODS
 
 Mojolicious::Che inherits all methods from Mojolicious and implements the following new ones.
@@ -352,15 +369,7 @@ Session
 
 =head2 хазы()
 
-Has
-
-=head2 базы()
-
-DBI handlers (dbh)
-
-=head2 запросы()
-
-DBI statements (sth)
+App has's
 
 =head2 плугины()
 
