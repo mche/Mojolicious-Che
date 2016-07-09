@@ -2,13 +2,13 @@ package Mojolicious::Che;
 use Mojo::Base::Che 'Mojolicious';
 use Mojo::Loader qw(load_class);
 
-our $VERSION = '0.020';
+our $VERSION = '0.021';
 
 =pod
 
 =head1 VERSION
 
-0.020
+0.021
 
 =cut
 
