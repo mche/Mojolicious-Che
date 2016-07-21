@@ -1,14 +1,14 @@
 package Mojolicious::Che;
 use Mojo::Base::Che 'Mojolicious';
-use Mojo::Loader qw(load_class);
+#~ use Mojo::Loader qw(load_class);
 
-our $VERSION = '0.021';
+our $VERSION = '0.022';
 
 =pod
 
 =head1 VERSION
 
-0.021
+0.022
 
 =cut
 
@@ -124,15 +124,15 @@ has sth => sub {
     }
   }
   
-  my $sth_pos;
-  while (my ($db, $arr) = each %$c_pos) {
-    for my $item (@$arr) {
-      $sth_pos ||= $app->_class('DBIx::POS::Sth');
-      my $pos_module = $app->_class(ref $item eq 'ARRAY' ? shift @$item : $item);
-      $sth->{$db}{$pos_module} = $sth_pos->new($dbh->{$db}, $pos_module->new(ref $item eq 'ARRAY' ? @$item : ()));
-      $app->log->debug("Создан STH из POS модуля [$pos_module]");
-    }
-  }
+  #~ my $sth_pos;
+  #~ while (my ($db, $arr) = each %$c_pos) {
+    #~ for my $item (@$arr) {
+      #~ $sth_pos ||= $app->_class('DBIx::POS::Sth');
+      #~ my $pos_module = $app->_class(ref $item eq 'ARRAY' ? shift @$item : $item);
+      #~ $sth->{$db}{$pos_module} = $sth_pos->new($dbh->{$db}, $pos_module->new(ref $item eq 'ARRAY' ? @$item : ()));
+      #~ $app->log->debug("Создан STH из POS модуля [$pos_module]");
+    #~ }
+  #~ }
   
   $sth;
 };
@@ -209,14 +209,14 @@ sub Mojolicious::Routes::is_hidden0000 {
    return !!($h->{$method} || $method =~ /^_/ || $method =~ /^[A-Z_]+$/);
 }
 
-sub _class {
-  my $self = shift;
-  my $class  = shift;
-  my $e;
-  $e = load_class($class)# success undef
-    and die $e;
-  return $class;
-}
+#~ sub _class {
+  #~ my $self = shift;
+  #~ my $class  = shift;
+  #~ my $e;
+  #~ $e = load_class($class)# success undef
+    #~ and die $e;
+  #~ return $class;
+#~ }
 
 1;
 
