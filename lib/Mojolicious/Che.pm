@@ -2,18 +2,20 @@ package Mojolicious::Che;
 use Mojo::Base::Che 'Mojolicious';
 #~ use Mojo::Loader qw(load_class);
 
-our $VERSION = '0.023';
+our $VERSION = '0.024';
 
 =pod
 
 =head1 VERSION
 
-0.023
+0.024
 
 =cut
 
-sub поехали {
-  my $app = shift;
+sub new {
+  my $app = shift->SUPER::new;
+  my %args = @_;
+  $app->plugin(Config =>{file => $args{config} || 'Config.pm'});
   my $conf = $app->config;
   
   my $defaults = $conf->{'mojo_defaults'} || $conf->{'mojo'}{'defaults'};
@@ -35,6 +37,8 @@ sub поехали {
   $app->хуки();
   $app->спейсы();
   $app->маршруты();
+  
+  return $app;
 
 }
 
@@ -237,14 +241,9 @@ Mojolicious::Che - Мой базовый модуль для приложени�
 
 =head1 SYNOPSIS
 
-  use Mojo::Base::Che 'Mojolicious::Che';
+  use Mojo::Base::Che 'Mojolicious::Che' -lib, 'lib';
   
-  sub startup {
-    my $app = shift;
-    $app->plugin(Config =>{file => 'Config.pm'});
-    $app->поехали();
-  }
-  __PACKAGE__->new()->start();
+  __PACKAGE__->new(config => 'lib/Config.pm')->start();
 
 
 =head1 Config file
@@ -272,9 +271,9 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   # 'сессия' => 
   mojo_session => {cookie_name => 'ELK'},
   
-  # 'хазы' => 'Лет 500-700 назад был такой дикий степной торговый жадный народ ХАЗАРЫ. Столицей их "государства" был город Тьмутаракань, где-то на берегу Каспия. Потомки этих людей рассыпаны по странам России, Средней Азии, Европы. Есть мнение, что хазары присвоили себе название ЕВРЕИ, но это не те библейские евреи.'
+  # 'хазы' => 'Лет 500-700 назад был такой дикий степной торговый жадный народ ХАЗАРЫ. Столицей их "государства" был город Тьмутаракань, где-то на берегу моря Каспия. Потомки этих людей рассыпаны по странам России, Средней Азии, Европы. Есть мнение, что хазары присвоили себе название ЕВРЕИ, но это не те библейские кроткие евреи, а жадные потомки кроманьонцев'
   mojo_has => {
-    foo => sub {my $app = shift; return 'bar!';},
+    foo => sub {my $app = shift; return 'is a bar';},
   },
   
   # 'базы' => 
@@ -316,15 +315,15 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   
   # 'плугины'=> [
   mojo_plugins=>[ 
-      [charset => { charset => 'UTF-8' }, ],
-      # or ['FooPlugin' => sub {...returns config hashref...}],
+      ['Foo::Bar'],
+      ['Foo::Plugin' => sub {<...returns config data...>}],
   ],
   # 'хуки' => 
   mojo_hooks=>{
     #~ before_dispatch => sub {1;},
   },
   # 'спейсы' => 
-  namespaces => [],
+  namespaces => ['Space::Shattle'],
   # 'маршруты' => 
   routes => [
     [get=>'/', to=> {cb=>sub{shift->render(format=>'txt', text=>'Hello!');},}],
@@ -346,7 +345,7 @@ Set prepared stattements from config B<sth> (или B<запросы>).
 Mojolicious::Che inherits all methods from Mojolicious and implements the following new ones.
 All methods has nothing on input.
 
-=head2 поехали()
+=head2 new()
 
 Top-level method. Setup the B<defaults>, B<secrets>, B<mode>, B<log level> from app->config(). Then invoke all other metods in order below.
 
