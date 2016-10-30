@@ -18,7 +18,7 @@ use Mojo::Base::Che 'Mojolicious::Che';
 
 sub startup {
   my $app = shift;
-  $app->plugin(Config =>{file => '../Config.pm'});
+  $app->plugin(Config =>{file => 'Config.pm'});
   $app->поехали();
 }
 

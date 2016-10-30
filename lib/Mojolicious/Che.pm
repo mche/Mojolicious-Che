@@ -2,13 +2,13 @@ package Mojolicious::Che;
 use Mojo::Base::Che 'Mojolicious';
 #~ use Mojo::Loader qw(load_class);
 
-our $VERSION = '0.022';
+our $VERSION = '0.023';
 
 =pod
 
 =head1 VERSION
 
-0.022
+0.023
 
 =cut
 
@@ -103,10 +103,11 @@ has sth => sub {
   
   my $c_dbh = $conf->{dbh} || $conf->{'базы'};
   my $c_sth = $conf->{sth} || $conf->{'запросы'} || {};
-  my $c_pos = $conf->{pos} || $conf->{'посы'} || {};
+  #~ my $c_pos = $conf->{pos} || $conf->{'посы'} || {};
     
-  return unless ($c_sth && ref($c_sth) eq 'HASH' && keys %$c_sth)
-    || ($c_pos && ref($c_pos) eq 'HASH' && keys %$c_pos);
+  return
+    unless ($c_sth && ref($c_sth) eq 'HASH' && keys %$c_sth);
+    #~ || ($c_pos && ref($c_pos) eq 'HASH' && keys %$c_pos);
 
   my $sth = {};
   
@@ -201,13 +202,13 @@ sub спейсы {
   push @{$app->routes->namespaces}, @$ns;
 }
 
-sub Mojolicious::Routes::is_hidden0000 {
-  my ($self, $method) = @_;
-  my $h = $self->{hiding} ||= {map { $_ => 1 } @{$self->hidden}};
-  #~ return !!($h->{$method} || index($method, '_') == 0 || $method !~ /[a-z]/);
-  #~ return !!($h->{$method} || index($method, '_') == 0);
-   return !!($h->{$method} || $method =~ /^_/ || $method =~ /^[A-Z_]+$/);
-}
+#~ sub Mojolicious::Routes::is_hidden0000 {
+  #~ my ($self, $method) = @_;
+  #~ my $h = $self->{hiding} ||= {map { $_ => 1 } @{$self->hidden}};
+  ##return !!($h->{$method} || index($method, '_') == 0 || $method !~ /[a-z]/);
+  ##return !!($h->{$method} || index($method, '_') == 0);
+   #~ return !!($h->{$method} || $method =~ /^_/ || $method =~ /^[A-Z_]+$/);
+#~ }
 
 #~ sub _class {
   #~ my $self = shift;
@@ -312,14 +313,7 @@ Mojolicious::Che - Мой базовый модуль для приложени�
       now => "select now();"
     },
   },
-  # DBIx::POS::Sth
-  # will be as has $app->sth->{<dbh name>}{<POS module name>}->sth(<statement name>, ...)
-  pos => {
-    main => [# hashref
-      ['POS::Foo' => template => {var1=>1,}],
-    ],
-  },
-    
+  
   # 'плугины'=> [
   mojo_plugins=>[ 
       [charset => { charset => 'UTF-8' }, ],
@@ -346,13 +340,6 @@ Set DBI handlers from config B<dbh> (или B<базы>)
 =head2 sth
 
 Set prepared stattements from config B<sth> (или B<запросы>).
-
-Также есть опция конфига B<pos>, которая подгружает специальные POS-модули в app->sth. Пример:
-
-  pos => {main => [['POS::Foo' => template => {var1=>1,}],],},
-  pos => {main => {'POS::Foo' => template => {var1=>1,},},},
-  # далее получение запросов
-  my $sth = $app->sth->{main}{'POS::Foo'}->sth('foo st', ...);
 
 =head1 METHODS
 

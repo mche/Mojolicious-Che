@@ -19,7 +19,7 @@ WriteMakefile(
     },
     PREREQ_PM => {
         'Mojolicious'              => 6.00,
-        'DBIx::POS::Template' => 0.01,
+        #'DBIx::POS::Template' => 0.01,
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     #clean => { FILES => 'Mojolicious-Che-*' },
