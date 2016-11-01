@@ -259,7 +259,7 @@ Mojolicious::Che - Мой базовый модуль для приложени�
     # defaults =>
     # secrets =>
     # mode=>
-    # log_level =>
+    # log =>
     # session =>
     # has =>
     # plugins=>
@@ -270,7 +270,7 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   # 'шифры' => [
   mojo_secrets => ['true 123 my app',],
   mojo_mode=> 'development',
-  mojo_log_level => 'debug',
+  mojo_log=>{level => 'debug',},
   # 'сессия' => 
   mojo_session => {cookie_name => 'ELK'},
   
@@ -350,7 +350,7 @@ All methods has nothing on input.
 
 =head2 new()
 
-Top-level method. Setup the B<defaults>, B<secrets>, B<mode>, B<log level> from app->config(). Then invoke all other metods in order below.
+Top-level method. Setup the atributes of app: B<defaults>, B<secrets>, B<mode>, B<log> from app->config(). Then invoke all other metods in order below.
 
 =head2 сессия()
 
