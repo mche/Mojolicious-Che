@@ -61,11 +61,11 @@ DIRFILESEP = /
 DFSEP = $(DIRFILESEP)
 NAME = Mojolicious::Che
 NAME_SYM = Mojolicious_Che
-VERSION = 0.024
+VERSION = 0.025
 VERSION_MACRO = VERSION
-VERSION_SYM = 0_024
+VERSION_SYM = 0_025
 DEFINE_VERSION = -D$(VERSION_MACRO)=\"$(VERSION)\"
-XS_VERSION = 0.024
+XS_VERSION = 0.025
 XS_VERSION_MACRO = XS_VERSION
 XS_DEFINE_VERSION = -D$(XS_VERSION_MACRO)=\"$(XS_VERSION)\"
 INST_ARCHLIB = blib/arch
@@ -165,8 +165,7 @@ C_FILES  =
 O_FILES  = 
 H_FILES  = 
 MAN1PODS = 
-MAN3PODS = 0README.pod \
-	Config.pm \
+MAN3PODS = Config.pm \
 	lib/Mojo/Base/Che.pm \
 	lib/Mojolicious/Che.pm
 
@@ -191,9 +190,7 @@ PERL_ARCHIVEDEP    =
 PERL_ARCHIVE_AFTER = 
 
 
-TO_INST_PM = 000test.pl \
-	0README.pod \
-	Config.pm \
+TO_INST_PM = Config.pm \
 	README.pod \
 	lib/Mojo/Base/Che.pm \
 	lib/Mojolicious/Che.pm
@@ -266,7 +263,7 @@ RCS_LABEL = rcs -Nv$(VERSION_SYM): -q
 DIST_CP = best
 DIST_DEFAULT = tardist
 DISTNAME = Mojolicious-Che
-DISTVNAME = Mojolicious-Che-0.024
+DISTVNAME = Mojolicious-Che-0.025
 
 
 # --- MakeMaker macro section:
@@ -423,12 +420,10 @@ POD2MAN = $(POD2MAN_EXE)
 
 
 manifypods : pure_all config  \
-	0README.pod \
 	Config.pm \
 	lib/Mojo/Base/Che.pm \
 	lib/Mojolicious/Che.pm
 	$(NOECHO) $(POD2MAN) --section=3 --perm_rw=$(PERM_RW) -u \
-	  0README.pod $(INST_MAN3DIR)/Mojolicious::0README.$(MAN3EXT) \
 	  Config.pm $(INST_MAN3DIR)/Mojolicious::Config.$(MAN3EXT) \
 	  lib/Mojo/Base/Che.pm $(INST_MAN3DIR)/Mojo::Base::Che.$(MAN3EXT) \
 	  lib/Mojolicious/Che.pm $(INST_MAN3DIR)/Mojolicious::Che.$(MAN3EXT) 
@@ -520,7 +515,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) 'requires:' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Mojolicious: '\''6'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  perl: '\''5.006'\''' >> META_new.yml
-	$(NOECHO) $(ECHO) 'version: '\''0.024'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) 'version: '\''0.025'\''' >> META_new.yml
 	-$(NOECHO) $(MV) META_new.yml $(DISTVNAME)/META.yml
 	$(NOECHO) $(ECHO) Generating META.json
 	$(NOECHO) $(ECHO) '{' > META_new.json
@@ -563,7 +558,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '      }' >> META_new.json
 	$(NOECHO) $(ECHO) '   },' >> META_new.json
 	$(NOECHO) $(ECHO) '   "release_status" : "stable",' >> META_new.json
-	$(NOECHO) $(ECHO) '   "version" : "0.024"' >> META_new.json
+	$(NOECHO) $(ECHO) '   "version" : "0.025"' >> META_new.json
 	$(NOECHO) $(ECHO) '}' >> META_new.json
 	-$(NOECHO) $(MV) META_new.json $(DISTVNAME)/META.json
 
@@ -872,7 +867,7 @@ testdb_static :: static pure_all
 # --- MakeMaker ppd section:
 # Creates a PPD (Perl Package Description) for a binary distribution.
 ppd :
-	$(NOECHO) $(ECHO) '<SOFTPKG NAME="Mojolicious-Che" VERSION="0.024">' > Mojolicious-Che.ppd
+	$(NOECHO) $(ECHO) '<SOFTPKG NAME="Mojolicious-Che" VERSION="0.025">' > Mojolicious-Che.ppd
 	$(NOECHO) $(ECHO) '    <ABSTRACT>Мой базовый модуль для приложений Mojolicious. Нужен только развернутый конфиг.</ABSTRACT>' >> Mojolicious-Che.ppd
 	$(NOECHO) $(ECHO) '    <AUTHOR>ÐÐ¸ÑÐ°Ð¸Ð» Ð§Ðµ &lt;mche@cpan.org&gt;</AUTHOR>' >> Mojolicious-Che.ppd
 	$(NOECHO) $(ECHO) '    <IMPLEMENTATION>' >> Mojolicious-Che.ppd
@@ -888,8 +883,6 @@ ppd :
 
 pm_to_blib : $(FIRST_MAKEFILE) $(TO_INST_PM)
 	$(NOECHO) $(ABSPERLRUN) -MExtUtils::Install -e 'pm_to_blib({@ARGV}, '\''$(INST_LIB)/auto'\'', q[$(PM_FILTER)], '\''$(PERM_DIR)'\'')' -- \
-	  '000test.pl' '$(INST_LIB)/Mojolicious/000test.pl' \
-	  '0README.pod' '$(INST_LIB)/Mojolicious/0README.pod' \
 	  'Config.pm' '$(INST_LIB)/Mojolicious/Config.pm' \
 	  'README.pod' '$(INST_LIB)/Mojolicious/README.pod' \
 	  'lib/Mojo/Base/Che.pm' 'blib/lib/Mojo/Base/Che.pm' \

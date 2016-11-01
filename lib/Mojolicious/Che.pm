@@ -2,13 +2,13 @@ package Mojolicious::Che;
 use Mojo::Base::Che 'Mojolicious';
 #~ use Mojo::Loader qw(load_class);
 
-our $VERSION = '0.024';
+our $VERSION = '0.025';
 
 =pod
 
 =head1 VERSION
 
-0.024
+0.025
 
 =cut
 
@@ -26,7 +26,10 @@ sub new {
   $app->secrets($secret);
 
   $app->mode($conf->{'mojo_mode'} || $conf->{'mojo'}{'mode'} || 'development'); # Файл лога уже не переключишь
-  $app->log->level( $conf->{'mojo_log_level'} || $conf->{'mojo'}{'log_level'} || 'debug');
+  #~ $app->log->level( $conf->{'mojo_log_level'} || $conf->{'mojo'}{'log_level'} || 'debug');
+  my $log = $conf->{'mojo_log'} || $conf->{'mojo.log'} || $conf->{'mojo'}{'log'};
+  $app->log(Mojo::Log->new(%$log))
+    if $log;
   #~ warn "Mode: ", $app->mode, "; log level: ", $app->log->level;
   
   $app->сессия();

@@ -29,7 +29,7 @@ Config.pm - Пример конфига для Mojolicious::Che приложен
     # has => ...,
   # },
   mojo_mode=> 'development',
-  mojo_log_level => 'debug',
+  mojo_log=>{level => 'debug'},
   # plugins
   'плугины'=>[ 
       #~ [charset => { charset => 'UTF-8' }, ],
