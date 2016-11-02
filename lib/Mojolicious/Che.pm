@@ -2,13 +2,13 @@ package Mojolicious::Che;
 use Mojo::Base::Che 'Mojolicious';
 #~ use Mojo::Loader qw(load_class);
 
-our $VERSION = '0.025';
+our $VERSION = '0.026';
 
 =pod
 
 =head1 VERSION
 
-0.025
+0.026
 
 =cut
 
@@ -31,6 +31,8 @@ sub new {
   $app->log(Mojo::Log->new(%$log))
     if $log;
   #~ warn "Mode: ", $app->mode, "; log level: ", $app->log->level;
+  my $paths = $conf->{'mojo_static_paths'} || $conf->{'mojo.static.paths'} || $conf->{mojo}{static}{paths};
+   push @{$app->static->paths}, @{$paths} if $paths;
   
   $app->сессия();
   $app->хазы();
