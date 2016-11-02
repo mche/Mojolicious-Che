@@ -2,13 +2,13 @@ package Mojolicious::Che;
 use Mojo::Base::Che 'Mojolicious';
 #~ use Mojo::Loader qw(load_class);
 
-our $VERSION = '0.026';
+our $VERSION = '0.027';
 
 =pod
 
 =head1 VERSION
 
-0.026
+0.027
 
 =cut
 
@@ -31,8 +31,14 @@ sub new {
   $app->log(Mojo::Log->new(%$log))
     if $log;
   #~ warn "Mode: ", $app->mode, "; log level: ", $app->log->level;
-  my $paths = $conf->{'mojo_static_paths'} || $conf->{'mojo.static.paths'} || $conf->{mojo}{static}{paths};
-   push @{$app->static->paths}, @{$paths} if $paths;
+  
+  my $home = $app->home;
+  my $paths = $conf->{'mojo_static_paths'} || $conf->{'mojo.static.paths'} || $conf->{mojo}{static}{paths} || [];
+   #~ push @{$app->static->paths}, @{$paths} if $paths;
+  push @{$app->static->paths},  $home->rel_dir($_) for @$paths;
+  my $templates_path = $conf->{'mojo_renderer_paths'} || $conf->{'mojo.renderer.paths'} || $conf->{mojo}{renderer}{paths} || [];
+  push @{$app->renderer->paths}, $home->rel_dir($_) for @$templates_path;
+  
   
   $app->сессия();
   $app->хазы();
@@ -261,7 +267,9 @@ Mojolicious::Che - Мой базовый модуль для приложени�
     # defaults =>
     # secrets =>
     # mode=>
-    # log =>
+    # log => {level=>...}
+    # static => {paths => [...]},
+    # renderer => {paths => [...] },
     # session =>
     # has =>
     # plugins=>
@@ -272,7 +280,8 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   # 'шифры' => [
   mojo_secrets => ['true 123 my app',],
   mojo_mode=> 'development',
-  mojo_log=>{level => 'debug',},
+  mojo_log_level => 'debug',
+  mojo_static_paths => ["static"],
   # 'сессия' => 
   mojo_session => {cookie_name => 'ELK'},
   
