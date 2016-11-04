@@ -23,11 +23,12 @@ sub new {
   #~ warn "Mode: ", $app->mode, "; log level: ", $app->log->level;
   
   my $home = $app->home;
-  my $paths = $conf->{'mojo_static_paths'} || $conf->{'mojo.static.paths'} || $conf->{mojo}{static}{paths} || [];
+  my $statics = $conf->{'mojo_static_paths'} || $conf->{'mojo.static.paths'} || $conf->{mojo}{static}{paths} || [];
    #~ push @{$app->static->paths}, @{$paths} if $paths;
-  push @{$app->static->paths},  $home->rel_dir($_) for @$paths;
-  my $templates_path = $conf->{'mojo_renderer_paths'} || $conf->{'mojo.renderer.paths'} || $conf->{mojo}{renderer}{paths} || [];
-  push @{$app->renderer->paths}, $home->rel_dir($_) for @$templates_path;
+  push @{$app->static->paths},  $home->rel_dir($_) for @$statics;
+  
+  my $templates_paths = $conf->{'mojo_renderer_paths'} || $conf->{'mojo.renderer.paths'} || $conf->{mojo}{renderer}{paths} || [];
+  push @{$app->renderer->paths}, $home->rel_dir($_) for @$templates_paths;
   
   my $renderer_classes = $conf->{'mojo_renderer_classes'} || $conf->{'mojo.renderer.classes'} || $conf->{mojo}{renderer}{classes} || [];
   push @{$app->renderer->classes}, $home->rel_dir($_) for grep ! load_class($_), @$renderer_classes;
@@ -261,7 +262,7 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   mojo_secrets => ['true 123 my app',],
   mojo_mode=> 'development',
   mojo_log_level => 'debug',
-  mojo_renderer_paths => ["static"],
+  mojo_static_paths => ["static"],
   mojo_renderer_classes => ["Mojolicious::Foo::Fun"],
   # 'сессия' => 
   mojo_session => {cookie_name => 'ELK'},
