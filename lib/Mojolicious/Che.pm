@@ -1,16 +1,6 @@
 package Mojolicious::Che;
 use Mojo::Base::Che 'Mojolicious';
-#~ use Mojo::Loader qw(load_class);
-
-our $VERSION = '0.027';
-
-=pod
-
-=head1 VERSION
-
-0.027
-
-=cut
+use Mojo::Loader qw(load_class);
 
 sub new {
   my $app = shift->SUPER::new;
@@ -38,6 +28,9 @@ sub new {
   push @{$app->static->paths},  $home->rel_dir($_) for @$paths;
   my $templates_path = $conf->{'mojo_renderer_paths'} || $conf->{'mojo.renderer.paths'} || $conf->{mojo}{renderer}{paths} || [];
   push @{$app->renderer->paths}, $home->rel_dir($_) for @$templates_path;
+  
+  my $renderer_classes = $conf->{'mojo_renderer_classes'} || $conf->{'mojo.renderer.classes'} || $conf->{mojo}{renderer}{classes} || [];
+  push @{$app->renderer->classes}, $home->rel_dir($_) for grep ! load_class($_), @$renderer_classes;
   
   
   $app->сессия();
@@ -217,24 +210,7 @@ sub спейсы {
   push @{$app->routes->namespaces}, @$ns;
 }
 
-#~ sub Mojolicious::Routes::is_hidden0000 {
-  #~ my ($self, $method) = @_;
-  #~ my $h = $self->{hiding} ||= {map { $_ => 1 } @{$self->hidden}};
-  ##return !!($h->{$method} || index($method, '_') == 0 || $method !~ /[a-z]/);
-  ##return !!($h->{$method} || index($method, '_') == 0);
-   #~ return !!($h->{$method} || $method =~ /^_/ || $method =~ /^[A-Z_]+$/);
-#~ }
-
-#~ sub _class {
-  #~ my $self = shift;
-  #~ my $class  = shift;
-  #~ my $e;
-  #~ $e = load_class($class)# success undef
-    #~ and die $e;
-  #~ return $class;
-#~ }
-
-1;
+our $VERSION = '0.028';
 
 =pod
 
@@ -245,6 +221,10 @@ sub спейсы {
 Доброго всем
 
 ¡ ¡ ¡ ALL GLORY TO GLORIA ! ! !
+
+=head1 VERSION
+
+0.028
 
 =head1 NAME
 
@@ -269,7 +249,7 @@ Mojolicious::Che - Мой базовый модуль для приложени�
     # mode=>
     # log => {level=>...}
     # static => {paths => [...]},
-    # renderer => {paths => [...] },
+    # renderer => {paths => [...], classes => [...], },
     # session =>
     # has =>
     # plugins=>
@@ -281,7 +261,8 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   mojo_secrets => ['true 123 my app',],
   mojo_mode=> 'development',
   mojo_log_level => 'debug',
-  mojo_static_paths => ["static"],
+  mojo_renderer_paths => ["static"],
+  mojo_renderer_classes => ["Mojolicious::Foo::Fun"],
   # 'сессия' => 
   mojo_session => {cookie_name => 'ELK'},
   
@@ -409,3 +390,5 @@ This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.
 
 =cut
+
+1;
