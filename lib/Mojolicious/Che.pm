@@ -31,7 +31,7 @@ sub new {
   push @{$app->renderer->paths}, $home->rel_dir($_) for @$templates_paths;
   
   my $renderer_classes = $conf->{'mojo_renderer_classes'} || $conf->{'mojo.renderer.classes'} || $conf->{mojo}{renderer}{classes} || [];
-  push @{$app->renderer->classes}, $home->rel_dir($_) for grep ! load_class($_), @$renderer_classes;
+  push @{$app->renderer->classes}, $_ for grep ! load_class($_), @$renderer_classes;
   
   
   $app->сессия();
