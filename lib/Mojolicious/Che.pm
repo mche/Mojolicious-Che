@@ -166,7 +166,11 @@ sub сессия {
   my $conf = $app->config;
   my $session = $conf->{'mojo_session'} || $conf->{'mojo'}{'session'} || $conf->{'сессия'}
     || return;
-  $app->sessions->cookie_name($session->{'cookie_name'});
+  $app->sessions->cookie_name($session->{'cookie_name'})
+    if $session->{'cookie_name'};
+  
+  $app->sessions->default_expiration($session->{'default_expiration'}) # set expiry
+    if defined $session->{'default_expiration'};
   
 }
 
@@ -211,7 +215,7 @@ sub спейсы {
   push @{$app->routes->namespaces}, @$ns;
 }
 
-our $VERSION = '0.028';
+our $VERSION = '0.029';
 
 =pod
 
@@ -225,7 +229,7 @@ our $VERSION = '0.028';
 
 =head1 VERSION
 
-0.028
+0.029
 
 =head1 NAME
 
@@ -265,7 +269,7 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   mojo_static_paths => ["static"],
   mojo_renderer_classes => ["Mojolicious::Foo::Fun"],
   # 'сессия' => 
-  mojo_session => {cookie_name => 'ELK'},
+  mojo_session => {cookie_name => 'EXX', default_expiration => 86400},
   
   # 'хазы' => 'Лет 500-700 назад был такой дикий степной торговый жадный народ ХАЗАРЫ. Столицей их "государства" был город Тьмутаракань, где-то на берегу моря Каспия. Потомки этих людей рассыпаны по странам России, Средней Азии, Европы. Есть мнение, что хазары присвоили себе название ЕВРЕИ, но это не те библейские кроткие евреи, а жадные потомки кроманьонцев'
   mojo_has => {
@@ -312,7 +316,8 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   # 'плугины'=> [
   mojo_plugins=>[ 
       ['Foo::Bar'],
-      ['Foo::Plugin' => sub {<...returns config data...>}],
+      [Foo::Bar::Plugin => opt1 => ..., opt2 => ...],
+      ['Foo::Plugin' => sub {<...returns config data list...>}],
   ],
   # 'хуки' => 
   mojo_hooks=>{
@@ -322,7 +327,7 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   namespaces => ['Space::Shattle'],
   # 'маршруты' => 
   routes => [
-    [get=>'/', to=> {cb=>sub{shift->render(format=>'txt', text=>'Hello!');},}],
+    [get=>'/', to=> {cb=>sub{shift->render(format=>'txt', text=>'Hello friend!');},}],
   ]
   };
 
