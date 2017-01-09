@@ -154,9 +154,14 @@ sub хуки {# Хуки из конфига
   my $hooks = $conf->{'mojo_hooks'} || $conf->{'mojo'}{'hooks'} || $conf->{'хуки'}
      || return;
   while (my ($name, $sub) = each %$hooks) {
-  #~ map {
-    $app->hook($name => $sub);
-    $app->log->debug("Applied hook [$name] from config");
+    if (ref $sub eq 'ARRAY') {
+      $app->hook($name => $_)
+        for @$sub;
+    } else {
+      $app->hook($name => $sub);
+    }
+    
+    $app->log->debug(sprintf("Applied hook%s [%s] from config", ref $sub eq 'ARRAY' ? "s (@{[ scalar @$sub]})" : '', $name));
   }
 
 }
