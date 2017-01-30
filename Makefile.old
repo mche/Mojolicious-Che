@@ -61,11 +61,11 @@ DIRFILESEP = /
 DFSEP = $(DIRFILESEP)
 NAME = Mojolicious::Che
 NAME_SYM = Mojolicious_Che
-VERSION = 0.029
+VERSION = 0.030
 VERSION_MACRO = VERSION
-VERSION_SYM = 0_029
+VERSION_SYM = 0_030
 DEFINE_VERSION = -D$(VERSION_MACRO)=\"$(VERSION)\"
-XS_VERSION = 0.029
+XS_VERSION = 0.030
 XS_VERSION_MACRO = XS_VERSION
 XS_DEFINE_VERSION = -D$(XS_VERSION_MACRO)=\"$(XS_VERSION)\"
 INST_ARCHLIB = blib/arch
@@ -265,7 +265,7 @@ RCS_LABEL = rcs -Nv$(VERSION_SYM): -q
 DIST_CP = best
 DIST_DEFAULT = tardist
 DISTNAME = Mojolicious-Che
-DISTVNAME = Mojolicious-Che-0.029
+DISTVNAME = Mojolicious-Che-0.030
 
 
 # --- MakeMaker macro section:
@@ -516,7 +516,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) 'requires:' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Mojolicious: '\''6'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  perl: '\''5.006'\''' >> META_new.yml
-	$(NOECHO) $(ECHO) 'version: '\''0.029'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) 'version: '\''0.030'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) 'x_serialization_backend: '\''CPAN::Meta::YAML version 0.018'\''' >> META_new.yml
 	-$(NOECHO) $(MV) META_new.yml $(DISTVNAME)/META.yml
 	$(NOECHO) $(ECHO) Generating META.json
@@ -560,7 +560,7 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '      }' >> META_new.json
 	$(NOECHO) $(ECHO) '   },' >> META_new.json
 	$(NOECHO) $(ECHO) '   "release_status" : "stable",' >> META_new.json
-	$(NOECHO) $(ECHO) '   "version" : "0.029",' >> META_new.json
+	$(NOECHO) $(ECHO) '   "version" : "0.030",' >> META_new.json
 	$(NOECHO) $(ECHO) '   "x_serialization_backend" : "JSON::PP version 2.27400_01"' >> META_new.json
 	$(NOECHO) $(ECHO) '}' >> META_new.json
 	-$(NOECHO) $(MV) META_new.json $(DISTVNAME)/META.json
@@ -870,7 +870,7 @@ testdb_static :: static pure_all
 # --- MakeMaker ppd section:
 # Creates a PPD (Perl Package Description) for a binary distribution.
 ppd :
-	$(NOECHO) $(ECHO) '<SOFTPKG NAME="Mojolicious-Che" VERSION="0.029">' > Mojolicious-Che.ppd
+	$(NOECHO) $(ECHO) '<SOFTPKG NAME="Mojolicious-Che" VERSION="0.030">' > Mojolicious-Che.ppd
 	$(NOECHO) $(ECHO) '    <ABSTRACT>Мой базовый модуль для приложений Mojolicious. Нужен только развернутый конфиг.</ABSTRACT>' >> Mojolicious-Che.ppd
 	$(NOECHO) $(ECHO) '    <AUTHOR>ÐÐ¸ÑÐ°Ð¸Ð» Ð§Ðµ &lt;mche@cpan.org&gt;</AUTHOR>' >> Mojolicious-Che.ppd
 	$(NOECHO) $(ECHO) '    <IMPLEMENTATION>' >> Mojolicious-Che.ppd

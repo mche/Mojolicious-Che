@@ -25,7 +25,7 @@ sub new {
   my $home = $app->home;
   my $statics = $conf->{'mojo_static_paths'} || $conf->{'mojo.static.paths'} || $conf->{mojo}{static}{paths} || [];
    #~ push @{$app->static->paths}, @{$paths} if $paths;
-  push @{$app->static->paths},  $home->rel_dir($_) for @$statics;
+  push @{$app->static->paths},  $home->rel_file($_) for @$statics;
   
   my $templates_paths = $conf->{'mojo_renderer_paths'} || $conf->{'mojo.renderer.paths'} || $conf->{mojo}{renderer}{paths} || [];
   push @{$app->renderer->paths}, $home->rel_dir($_) for @$templates_paths;
@@ -220,7 +220,7 @@ sub спейсы {
   push @{$app->routes->namespaces}, @$ns;
 }
 
-our $VERSION = '0.029';
+our $VERSION = '0.030';
 
 =pod
 
@@ -234,7 +234,7 @@ our $VERSION = '0.029';
 
 =head1 VERSION
 
-0.029
+0.030
 
 =head1 NAME
 
