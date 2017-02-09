@@ -14,8 +14,10 @@ sub new {
   
   my $secret = $conf->{'mojo_secret'} || $conf->{'mojo_secrets'} || $conf->{'mojo'}{'secret'} || $conf->{'mojo'}{'secrets'} || $conf->{'шифры'} || [rand];
   $app->secrets($secret);
-
-  $app->mode($conf->{'mojo_mode'} || $conf->{'mojo'}{'mode'} || 'development'); # Файл лога уже не переключишь
+  
+  my $mode = $conf->{'mojo_mode'} || $conf->{'mojo'}{'mode'};
+  $app->mode($mode) # Файл лога уже не переключишь
+    if $mode;
   #~ $app->log->level( $conf->{'mojo_log_level'} || $conf->{'mojo'}{'log_level'} || 'debug');
   my $log = $conf->{'mojo_log'} || $conf->{'mojo.log'} || $conf->{'mojo'}{'log'};
   $app->log(Mojo::Log->new(%$log))
