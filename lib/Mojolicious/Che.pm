@@ -1,5 +1,6 @@
 package Mojolicious::Che;
 use Mojo::Base::Che 'Mojolicious';
+use Mojo::Log::Che;
 use Mojo::Loader qw(load_class);
 
 sub new {
@@ -20,7 +21,7 @@ sub new {
     if $mode;
   #~ $app->log->level( $conf->{'mojo_log_level'} || $conf->{'mojo'}{'log_level'} || 'debug');
   my $log = $conf->{'mojo_log'} || $conf->{'mojo.log'} || $conf->{'mojo'}{'log'};
-  $app->log(Mojo::Log->new(%$log))
+  $app->log(Mojo::Log::Che->new(%$log))
     if $log;
   #~ warn "Mode: ", $app->mode, "; log level: ", $app->log->level;
   
@@ -136,17 +137,7 @@ has sth => sub {
     }
   }
   
-  #~ my $sth_pos;
-  #~ while (my ($db, $arr) = each %$c_pos) {
-    #~ for my $item (@$arr) {
-      #~ $sth_pos ||= $app->_class('DBIx::POS::Sth');
-      #~ my $pos_module = $app->_class(ref $item eq 'ARRAY' ? shift @$item : $item);
-      #~ $sth->{$db}{$pos_module} = $sth_pos->new($dbh->{$db}, $pos_module->new(ref $item eq 'ARRAY' ? @$item : ()));
-      #~ $app->log->debug("Создан STH из POS модуля [$pos_module]");
-    #~ }
-  #~ }
-  
-  $sth;
+   $sth;
 };
 
   
@@ -222,7 +213,7 @@ sub спейсы {
   push @{$app->routes->namespaces}, @$ns;
 }
 
-our $VERSION = '0.030';
+our $VERSION = '0.031';
 
 =pod
 
@@ -236,7 +227,7 @@ our $VERSION = '0.030';
 
 =head1 VERSION
 
-0.030
+0.031
 
 =head1 NAME
 
@@ -272,7 +263,7 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   # 'шифры' => [
   mojo_secrets => ['true 123 my app',],
   mojo_mode=> 'development',
-  mojo_log_level => 'debug',
+  mojo_log=>{level => 'error'},
   mojo_static_paths => ["static"],
   mojo_renderer_classes => ["Mojolicious::Foo::Fun"],
   # 'сессия' => 
@@ -397,7 +388,7 @@ Please report any bugs or feature requests at L<https://github.com/mche/Mojolici
 
 =head1 COPYRIGHT
 
-Copyright 2016 Mikhail Che.
+Copyright 2016-2017 Mikhail Che.
 
 This library is free software; you can redistribute it and/or modify
 it under the same terms as Perl itself.

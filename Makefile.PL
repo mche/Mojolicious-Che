@@ -18,8 +18,8 @@ WriteMakefile(
         'Test::More' => 0,
     },
     PREREQ_PM => {
-        'Mojolicious'              => 6.00,
-        #'DBIx::POS::Template' => 0.01,
+        'Mojolicious'              => 7.00,
+        'Mojo::Log::Che' => 0.01,
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     #clean => { FILES => 'Mojolicious-Che-*' },
