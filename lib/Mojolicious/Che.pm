@@ -4,19 +4,21 @@ use Mojo::Log::Che;
 use Mojo::Loader qw(load_class);
 
 sub new {
-  my $app = shift->SUPER::new;
-  my %args = @_;
-  $app->plugin(Config =>{file => $args{config} || 'Config.pm'});
+  my ($class, %args) = @_;
+  my $config = delete($args{config}) || 'Config.pm';
+  my $app = $class->SUPER::new(%args);
+  
+  $app->plugin(Config =>{file => $config});
   my $conf = $app->config;
   
-  my $defaults = $conf->{'mojo_defaults'} || $conf->{'mojo'}{'defaults'};
+  my $defaults = $conf->{'mojo_defaults'} || $conf->{'mojo'}{'defaults'}  || $conf->{'mojo.defaults'};
   $app->defaults($defaults)
     if $defaults;
   
   my $secret = $conf->{'mojo_secret'} || $conf->{'mojo_secrets'} || $conf->{'mojo'}{'secret'} || $conf->{'mojo'}{'secrets'} || $conf->{'шифры'} || [rand];
   $app->secrets($secret);
   
-  my $mode = $conf->{'mojo_mode'} || $conf->{'mojo'}{'mode'};
+  my $mode = $conf->{'mojo_mode'} || $conf->{'mojo'}{'mode'} || $conf->{'mojo.mode'};
   $app->mode($mode) # Файл лога уже не переключишь
     if $mode;
   #~ $app->log->level( $conf->{'mojo_log_level'} || $conf->{'mojo'}{'log_level'} || 'debug');
@@ -162,7 +164,7 @@ sub хуки {# Хуки из конфига
 sub сессия {
   my $app = shift;
   my $conf = $app->config;
-  my $session = $conf->{'mojo_session'} || $conf->{'mojo'}{'session'} || $conf->{'сессия'}
+  my $session = $conf->{'mojo_session'} || $conf->{'mojo.session'} || $conf->{'mojo'}{'session'} || $conf->{'сессия'}
     || return;
   $app->sessions->cookie_name($session->{'cookie_name'})
     if $session->{'cookie_name'};
@@ -329,48 +331,50 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   ]
   };
 
-=head1 HAS's
+=head1 ATTRIBUTES
+
+B<Mojolicious::Che> inherits all attributes from L<Mojolicious> and implements the
+following new ones.
 
 =head2 dbh
 
 Set DBI handlers from config B<dbh> (или B<базы>)
 
+  my $dbh = $app->dbh->{main};
+
 =head2 sth
 
 Set prepared stattements from config B<sth> (или B<запросы>).
 
+  my $sth = $app->sth->{main}{foo};
+
 =head1 METHODS
 
-Mojolicious::Che inherits all methods from Mojolicious and implements the following new ones.
-All methods has nothing on input.
-
-=head2 new()
-
-Top-level method. Setup the atributes of app: B<defaults>, B<secrets>, B<mode>, B<log> from app->config(). Then invoke all other metods in order below.
+B<Mojolicious::Che> inherits all methods from L<Mojolicious> and implements the following new ones.
 
 =head2 сессия()
 
-Session
+Session object config apply
 
 =head2 хазы()
 
-App has's
+Apply has's
 
 =head2 плугины()
 
-Plugins
+Apply plugins
 
 =head2 хуки()
 
-Hooks
+Apply hooks
 
 =head2 спейсы()
 
-Namespases
+Apply namespases
 
 =head2 маршруты()
 
-Routes
+Apply routes
 
 =head1 SEE ALSO
 
