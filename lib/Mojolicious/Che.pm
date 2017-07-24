@@ -167,11 +167,11 @@ sub сессия {
   my $session = $conf->{'mojo_session'} || $conf->{'mojo.session'} || $conf->{'mojo'}{'session'} || $conf->{'сессия'}
     || return;
   
-  $app->sessions->cookie_name($session->{'cookie_name'})
-    if $session->{'cookie_name'};
+  #~ $app->sessions->cookie_name($session->{'cookie_name'})
+    #~ if $session->{'cookie_name'};
   
-  $app->sessions->default_expiration($session->{'default_expiration'}) # set expiry
-    if defined $session->{'default_expiration'};
+  #~ $app->sessions->default_expiration($session->{'default_expiration'}) # set expiry
+    #~ if defined $session->{'default_expiration'};
   
   while (my ($meth, $val) = each %$session) {
     next
