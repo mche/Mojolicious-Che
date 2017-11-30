@@ -16,10 +16,11 @@
 #     BUILD_REQUIRES => { Test::More=>q[0] }
 #     CONFIGURE_REQUIRES => { ExtUtils::MakeMaker=>q[0] }
 #     LICENSE => q[perl]
+#     META_MERGE => { meta-spec=>{ version=>q[2] }, resources=>{ repository=>{ type=>q[git], url=>q[git://github.com/mche/Mojolicious-Che.git], web=>q[https://github.com/mche/Mojolicious-Che] } } }
 #     MIN_PERL_VERSION => q[5.006]
 #     NAME => q[Mojolicious::Che]
 #     PL_FILES => {  }
-#     PREREQ_PM => { Mojo::Log::Che=>q[0.01], Mojolicious=>q[7], Test::More=>q[0] }
+#     PREREQ_PM => { Mojo::Log::Che=>q[0.01], Mojolicious=>q[7.57], Test::More=>q[0] }
 #     TEST_REQUIRES => {  }
 #     VERSION_FROM => q[lib/Mojolicious/Che.pm]
 #     dist => { COMPRESS=>q[gzip -9f], SUFFIX=>q[gz] }
@@ -515,8 +516,10 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '    - inc' >> META_new.yml
 	$(NOECHO) $(ECHO) 'requires:' >> META_new.yml
 	$(NOECHO) $(ECHO) '  Mojo::Log::Che: '\''0.01'\''' >> META_new.yml
-	$(NOECHO) $(ECHO) '  Mojolicious: '\''7'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) '  Mojolicious: '\''7.57'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) '  perl: '\''5.006'\''' >> META_new.yml
+	$(NOECHO) $(ECHO) 'resources:' >> META_new.yml
+	$(NOECHO) $(ECHO) '  repository: git://github.com/mche/Mojolicious-Che.git' >> META_new.yml
 	$(NOECHO) $(ECHO) 'version: '\''0.033'\''' >> META_new.yml
 	$(NOECHO) $(ECHO) 'x_serialization_backend: '\''CPAN::Meta::YAML version 0.018'\''' >> META_new.yml
 	-$(NOECHO) $(MV) META_new.yml $(DISTVNAME)/META.yml
@@ -556,12 +559,19 @@ metafile : create_distdir
 	$(NOECHO) $(ECHO) '      "runtime" : {' >> META_new.json
 	$(NOECHO) $(ECHO) '         "requires" : {' >> META_new.json
 	$(NOECHO) $(ECHO) '            "Mojo::Log::Che" : "0.01",' >> META_new.json
-	$(NOECHO) $(ECHO) '            "Mojolicious" : "7",' >> META_new.json
+	$(NOECHO) $(ECHO) '            "Mojolicious" : "7.57",' >> META_new.json
 	$(NOECHO) $(ECHO) '            "perl" : "5.006"' >> META_new.json
 	$(NOECHO) $(ECHO) '         }' >> META_new.json
 	$(NOECHO) $(ECHO) '      }' >> META_new.json
 	$(NOECHO) $(ECHO) '   },' >> META_new.json
 	$(NOECHO) $(ECHO) '   "release_status" : "stable",' >> META_new.json
+	$(NOECHO) $(ECHO) '   "resources" : {' >> META_new.json
+	$(NOECHO) $(ECHO) '      "repository" : {' >> META_new.json
+	$(NOECHO) $(ECHO) '         "type" : "git",' >> META_new.json
+	$(NOECHO) $(ECHO) '         "url" : "git://github.com/mche/Mojolicious-Che.git",' >> META_new.json
+	$(NOECHO) $(ECHO) '         "web" : "https://github.com/mche/Mojolicious-Che"' >> META_new.json
+	$(NOECHO) $(ECHO) '      }' >> META_new.json
+	$(NOECHO) $(ECHO) '   },' >> META_new.json
 	$(NOECHO) $(ECHO) '   "version" : "0.033",' >> META_new.json
 	$(NOECHO) $(ECHO) '   "x_serialization_backend" : "JSON::PP version 2.27400_02"' >> META_new.json
 	$(NOECHO) $(ECHO) '}' >> META_new.json
@@ -878,7 +888,7 @@ ppd :
 	$(NOECHO) $(ECHO) '    <IMPLEMENTATION>' >> Mojolicious-Che.ppd
 	$(NOECHO) $(ECHO) '        <PERLCORE VERSION="5,006,0,0" />' >> Mojolicious-Che.ppd
 	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mojo::Log::Che" VERSION="0.01" />' >> Mojolicious-Che.ppd
-	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mojolicious::" VERSION="7" />' >> Mojolicious-Che.ppd
+	$(NOECHO) $(ECHO) '        <REQUIRE NAME="Mojolicious::" VERSION="7.57" />' >> Mojolicious-Che.ppd
 	$(NOECHO) $(ECHO) '        <ARCHITECTURE NAME="x86_64-linux-5.25" />' >> Mojolicious-Che.ppd
 	$(NOECHO) $(ECHO) '        <CODEBASE HREF="" />' >> Mojolicious-Che.ppd
 	$(NOECHO) $(ECHO) '    </IMPLEMENTATION>' >> Mojolicious-Che.ppd

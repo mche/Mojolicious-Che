@@ -181,9 +181,9 @@ sub with_roles {
 
 =head1 NAME
 
-Mojo::Base::Che - use Mojo::Base::Che 'SomeBaseClass',-lib, qw(rel/path/lib /abs/path/lib);
+Mojo::Base::Che - current copied from L<Mojo::Base> 7.57 where commented the line 33 + sub _lib_flags
 
-=head1 DESCR
+=head1 DESCRIPTION
 
 Чистая копия L<Mojo::Base> и небольшие патчи.
 
@@ -191,11 +191,11 @@ Mojo::Base::Che - use Mojo::Base::Che 'SomeBaseClass',-lib, qw(rel/path/lib /abs
 
 1. Добавление путей в @INC;
 
-2. Разрешены хазы/атрибуты не латиницей;
+2. Разрешены хазы/атрибуты не только латиницей;
 
 =head1 SYNOPSIS
 
-This module provide a fourth extended form for add extra lib directories to perl's search path. See <lib>
+This module provide a extended form for add extra lib directories to perl's search path. See L<lib>
 
   use Mojo::Base::Che -lib, qw(rel/path/lib /abs/path/lib);
   use Mojo::Base::Che -lib, ['lib1', 'lib2'];
@@ -204,13 +204,13 @@ This module provide a fourth extended form for add extra lib directories to perl
   use Mojo::Base::Che qw(-base -lib lib1 lib2);
   use Mojo::Base::Che 'SomeBaseClass', qw(-lib lib1 lib2);
   
-  # utf8 names allow
+  # non latinic names allow
   has qw(хаз);
 
 For relative lib path will use L<FindBin> module and C<$FindBin::Bin> is prepends to that lib.
 Libs always applied first even its last on flags list.
 
-All three L<Mojo::Base> forms works also.
+Other L<Mojo::Base> forms works also.
 
 =head1 SEE ALSO
 
