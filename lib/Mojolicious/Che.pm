@@ -1,5 +1,5 @@
 package Mojolicious::Che;
-use Mojo::Base  'Mojolicious';#::Che
+use Mojo::Base::Che  'Mojolicious';#::Che
 use Mojo::Log::Che;
 use Mojo::Loader qw(load_class);
 
@@ -62,16 +62,19 @@ sub хазы { # Хазы из конфига
   } keys %$h;
 }
 
-sub плугины {# Плугины из конфига
+#~ sub плугины {# Плугины из конфига
+has плугины => sub {
   my $app = shift;
   my $conf = $app->config;
+  my $плугины = {};
   my $plugins = $conf->{'mojo_plugins'} || $conf->{'mojo'}{'plugins'} || $conf->{'плугины'}
     || return;
   map {
-    ref $_->[1] eq 'CODE' ? $app->plugin($_->[0] => $app->${ \$_->[1] }) : $app->plugin(@$_);
+    push @{ $плугины->{$_->[0]} ||= [] }, [ref $_->[1] eq 'CODE' ? $app->plugin($_->[0] => $app->${ \$_->[1] }) : $app->plugin(@$_)];
     $app->log->debug("Enable plugin [$_->[0]]");
   } @$plugins;
-}
+  return $плугины;
+};
 
 has dbh => sub {
 #~ sub базы {# обрабатывает dbh конфига
@@ -221,7 +224,34 @@ sub спейсы {
   push @{$app->routes->namespaces}, @$ns;
 }
 
-our $VERSION = '0.033';
+# overide only on my $path   = $req->url->path->to_route;# to_abs_string;
+sub Mojolicious::dispatch {
+  my ($self, $c) = @_;
+
+  my $plugins = $self->plugins->emit_hook(before_dispatch => $c);
+
+  # Try to find a static file
+  my $tx = $c->tx;
+  $self->static->dispatch($c) and $plugins->emit_hook(after_static => $c)
+    unless $tx->res->code;
+
+  # Start timer (ignore static files)
+  my $stash = $c->stash;
+  unless ($stash->{'mojo.static'} || $stash->{'mojo.started'}) {
+    my $req    = $c->req;
+    my $method = $req->method;
+    my $path   = $req->url->path->to_route;# to_abs_string;
+    $self->log->debug(qq{$method "$path"});
+    $stash->{'mojo.started'} = [Time::HiRes::gettimeofday];
+  }
+
+  # Routes
+  $plugins->emit_hook(before_routes => $c);
+  $c->helpers->reply->not_found
+    unless $tx->res->code || $self->routes->dispatch($c) || $tx->res->code;
+}
+
+our $VERSION = '0.034';
 
 =pod
 
@@ -235,7 +265,7 @@ our $VERSION = '0.033';
 
 =head1 VERSION
 
-0.033
+0.034
 
 =head1 NAME
 
