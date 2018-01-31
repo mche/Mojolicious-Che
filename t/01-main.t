@@ -14,6 +14,6 @@ done_testing;
 
 package MyApp;
 
-use Mojo::Base::Che 'Mojolicious::Che';
+use Mojo::Base 'Mojolicious::Che';
 
 

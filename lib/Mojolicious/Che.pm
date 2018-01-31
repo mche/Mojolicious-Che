@@ -1,5 +1,6 @@
 package Mojolicious::Che;
-use Mojo::Base::Che  'Mojolicious';#::Che
+use Mojo::Base  'Mojolicious';#::Che
+use Mojo::Base::Che; # один патч для хазов
 use Mojo::Log::Che;
 use Mojo::Loader qw(load_class);
 
@@ -273,8 +274,9 @@ Mojolicious::Che - Мой базовый модуль для приложени�
 
 =head1 SYNOPSIS
 
-  use Mojo::Base::Che 'Mojolicious::Che' -lib, 'lib';
-  
+  # app.pl
+  use lib 'lib';
+  use Mojo::Base 'Mojolicious::Che';
   __PACKAGE__->new(config => 'lib/Config.pm')->start();
 
 
