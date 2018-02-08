@@ -1,6 +1,6 @@
 package Mojolicious::Che;
-use Mojo::Base  'Mojolicious';#::Che
 use Mojo::Base::Che; # один патч для хазов
+use Mojo::Base  'Mojolicious';#::Che
 use Mojo::Log::Che;
 use Mojo::Loader qw(load_class);
 
