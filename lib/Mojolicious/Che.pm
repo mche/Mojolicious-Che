@@ -424,23 +424,42 @@ Session object config apply
 
 =head2 хазы()
 
-Apply has's
+Apply the has's
 
 =head2 плугины()
 
-Apply plugins
+Apply the plugins
 
 =head2 хуки()
 
-Apply hooks
+Apply the hooks
 
 =head2 спейсы()
 
-Apply namespases
+Apply the namespases
 
 =head2 маршруты()
 
-Apply routes
+Apply the routes
+
+  #~ 'маршруты' => [
+  'routes'=>[
+    [get=>'/', to=> {cb=>sub{shift->render(format=>'txt', text=>'Welcome!');},}],
+  ],
+
+=head2 задачи()
+
+Apply the jobs
+
+  #~ 'задачи'=> {#first enable plugin Minion
+  'jobs'=> { # or tasks
+    slow_log => sub {
+      my ($job, $msg) = @_;
+      sleep 5;
+      $job->app->log->error(qq{slow_log "$msg"});
+    },
+    
+  },
 
 =head1 SEE ALSO
 
