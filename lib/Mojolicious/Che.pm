@@ -272,7 +272,7 @@ sub Mojolicious::dispatch {
 }
 
 
-our $VERSION = '0.041';
+our $VERSION = '0.040';
 
 =pod
 
@@ -286,7 +286,7 @@ our $VERSION = '0.041';
 
 =head1 VERSION
 
-0.041
+0.040
 
 =head1 NAME
 
