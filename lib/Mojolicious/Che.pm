@@ -231,16 +231,15 @@ sub спейсы {
 sub задачи {
   my $app = shift;
   my $conf = $app->config;
-  my $tasks = $conf->{'tasks'} || $conf->{'задачи'}
+  my $tasks = $conf->{'jobs'} || $conf->{'tasks'} || $conf->{'задачи'}
     or return;
   
-  die "First enable plugin Minion"
+  die "You have jobs and first enable plugin Minion"
     unless $app->renderer->get_helper('minion');
   
   while (my ($name, $sub) = each %$tasks) {
     $app->log->debug(sprintf("Applied task [%s] in [%s] from config", $name, $app->minion->add_task($name => $sub)));
   }
-  
   #~ $app->minion->reset;
 }
 
@@ -273,7 +272,7 @@ sub Mojolicious::dispatch {
 }
 
 
-our $VERSION = '0.040';
+our $VERSION = '0.041';
 
 =pod
 
@@ -287,7 +286,7 @@ our $VERSION = '0.040';
 
 =head1 VERSION
 
-0.040
+0.041
 
 =head1 NAME
 
@@ -388,6 +387,14 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   routes => [
     [get=>'/', to=> {cb=>sub{shift->render(format=>'txt', text=>'Hello friend!');},}],
   ]
+  #~ 'задачи'=> {#first enable plugin Minion
+  jobs => {
+    slow_log => sub {
+      my ($job, $msg) = @_;
+      sleep 5;
+      $job->app->log->error(qq{slow_log "$msg"});
+    },
+  },
   };
 
 =head1 ATTRIBUTES
