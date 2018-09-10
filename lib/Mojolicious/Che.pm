@@ -3,7 +3,7 @@ use Mojo::Base::Che; # один патч для хазов
 use Mojo::Base  'Mojolicious';#::Che
 use Mojo::Log::Che;
 use Mojo::Loader qw(load_class);
-use Scalar::Util 'weaken';
+#~ use Scalar::Util 'weaken';
 
 sub new {
   my ($class, %args) = @_;
@@ -50,7 +50,8 @@ sub new {
   $app->спейсы();
   $app->маршруты();
   $app->задачи();
-  
+
+
   return $app;
 
 }
@@ -232,11 +233,9 @@ sub задачи {
   my $conf = $app->config;
   my $tasks = $conf->{'tasks'} || $conf->{'задачи'}
     or return;
-    
-  $app->plugin(Minion =>{Pg => $conf->{pg} })
-    if $conf->{pg} || return;#$app->dbh->{'main'}
   
-  weaken $app->minion->app($app)->{app};
+  die "First enable plugin Minion"
+    unless $app->renderer->get_helper('minion');
   
   while (my ($name, $sub) = each %$tasks) {
     $app->log->debug(sprintf("Applied task [%s] in [%s] from config", $name, $app->minion->add_task($name => $sub)));
