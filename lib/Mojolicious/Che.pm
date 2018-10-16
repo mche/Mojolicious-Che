@@ -3,7 +3,7 @@ use Mojo::Base::Che; # один патч для хазов
 use Mojo::Base  'Mojolicious';
 use Mojo::Log::Che;
 use Mojo::Loader qw(load_class);
-use Mojo::Util qw(url_unescape);
+#~ use Mojo::Util qw(url_unescape);
 #~ use Scalar::Util 'weaken';
 
 sub new {
@@ -260,7 +260,7 @@ sub Mojolicious::dispatch {
   unless ($stash->{'mojo.static'} || $stash->{'mojo.started'}) {
     my $req    = $c->req;
     my $method = $req->method;
-    my $path   = url_unescape $req->url->path->to_abs_string;
+    my $path   = $req->url->path->to_route;#to_abs_string;
     my $id     = $req->request_id;
     $self->log->debug(qq{$method "$path" ($id)});
     $c->helpers->timing->begin('mojo.timer');
