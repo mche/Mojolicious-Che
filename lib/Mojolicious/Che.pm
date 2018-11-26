@@ -257,14 +257,14 @@ sub Mojolicious::dispatch {
 
   # Start timer (ignore static files)
   my $stash = $c->stash;
-  unless ($stash->{'mojo.static'} || $stash->{'mojo.started'}) {
+  $self->log->debug(sub {
     my $req    = $c->req;
     my $method = $req->method;
     my $path   = $req->url->path->to_route;#to_abs_string;
     my $id     = $req->request_id;
-    $self->log->debug(qq{$method "$path" ($id)});
     $c->helpers->timing->begin('mojo.timer');
-  }
+    return qq{$method "$path" ($id)};
+  }) unless $stash->{'mojo.static'};
 
   # Routes
   $plugins->emit_hook(before_routes => $c);
@@ -273,7 +273,7 @@ sub Mojolicious::dispatch {
 }
 
 
-our $VERSION = '0.08031';# as to Mojolicious 8.02
+our $VERSION = '0.0807';# as to Mojolicious/100
 
 =pod
 
