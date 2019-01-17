@@ -13,12 +13,13 @@ sub new {
   
   $app->plugin(Config =>{file => $config});
   my $conf = $app->config;
+  $conf->{mojo} ||= {};
   
   my $defaults = $conf->{'mojo_defaults'} || $conf->{'mojo'}{'defaults'}  || $conf->{'mojo.defaults'};
   $app->defaults($defaults)
     if $defaults;
   
-  my $secret = $conf->{'mojo_secret'} || $conf->{'mojo_secrets'} || $conf->{'mojo'}{'secret'} || $conf->{'mojo'}{'secrets'} || $conf->{'шифры'} || [rand];
+  my $secret = $conf->{'mojo_secret'} || $conf->{'mojo_secrets'} || $conf->{'mojo'}{'secret'} || $conf->{'mojo'}{'secrets'} || $conf->{'mojo.secret'} || $conf->{'mojo.secrets'} || $conf->{'шифры'} || [rand];
   $app->secrets($secret);
   
   my $mode = $conf->{'mojo_mode'} || $conf->{'mojo'}{'mode'} || $conf->{'mojo.mode'};
@@ -31,16 +32,15 @@ sub new {
   #~ warn "Mode: ", $app->mode, "; log level: ", $app->log->level;
   
   my $home = $app->home;
-  my $statics = $conf->{'mojo_static_paths'} || $conf->{'mojo.static.paths'} || $conf->{mojo}{static}{paths} || [];
+  my $statics = $conf->{'mojo_static_paths'} || $conf->{'mojo.static.paths'} || $conf->{'mojo'}{'static'}{'paths'} || [];
    #~ push @{$app->static->paths}, @{$paths} if $paths;
   push @{$app->static->paths},  $home->rel_file($_) for @$statics;
   
-  my $templates_paths = $conf->{'mojo_renderer_paths'} || $conf->{'mojo.renderer.paths'} || $conf->{mojo}{renderer}{paths} || [];
+  my $templates_paths = $conf->{'mojo_renderer_paths'} || $conf->{'mojo.renderer.paths'} || $conf->{'mojo'}{'renderer'}{'paths'} || [];
   push @{$app->renderer->paths}, $home->rel_dir($_) for @$templates_paths;
   
-  my $renderer_classes = $conf->{'mojo_renderer_classes'} || $conf->{'mojo.renderer.classes'} || $conf->{mojo}{renderer}{classes} || [];
+  my $renderer_classes = $conf->{'mojo_renderer_classes'} || $conf->{'mojo.renderer.classes'} || $conf->{'mojo'}{'renderer'}{'classes'} || [];
   push @{$app->renderer->classes}, $_ for grep ! load_class($_), @$renderer_classes;
-  
   
   $app->сессия();
   $app->хазы();
@@ -51,7 +51,7 @@ sub new {
   $app->спейсы();
   $app->маршруты();
   $app->задачи();
-
+  $app->типы();
 
   return $app;
 
@@ -60,7 +60,7 @@ sub new {
 sub хазы { # Хазы из конфига
   my $app = shift;
   my $conf = $app->config;
-  my $h = $conf->{'mojo_has'} || $conf->{'mojo'}{'has'} || $conf->{'хазы'};
+  my $h = $conf->{'mojo_has'} || $conf->{'mojo.has'} || $conf->{'mojo'}{'has'} || $conf->{'хазы'};
   map {
     $app->log->debug("Make the app->has('$_')");
     has $_ => $h->{$_};
@@ -72,7 +72,7 @@ has плугины => sub {
   my $app = shift;
   my $conf = $app->config;
   my $плугины = {};
-  my $plugins = $conf->{'mojo_plugins'} || $conf->{'mojo'}{'plugins'} || $conf->{'плугины'}
+  my $plugins = $conf->{'mojo_plugins'} || $conf->{'mojo.plugins'} || $conf->{'mojo'}{'plugins'} || $conf->{'плугины'}
     || return;
   map {
     push @{ $плугины->{$_->[0]} ||= [] }, [ref $_->[1] eq 'CODE' ? $app->plugin($_->[0] => $app->${ \$_->[1] }) : $app->plugin(@$_)];
@@ -154,7 +154,7 @@ has sth => sub {
 sub хуки {# Хуки из конфига
   my $app = shift;
   my $conf = $app->config;
-  my $hooks = $conf->{'mojo_hooks'} || $conf->{'mojo'}{'hooks'} || $conf->{'хуки'}
+  my $hooks = $conf->{'mojo_hooks'} || $conf->{'mojo.hooks'} || $conf->{'mojo'}{'hooks'} || $conf->{'хуки'}
      || return;
   while (my ($name, $sub) = each %$hooks) {
     if (ref $sub eq 'ARRAY') {
@@ -172,7 +172,7 @@ sub хуки {# Хуки из конфига
 sub сессия {
   my $app = shift;
   my $conf = $app->config;
-  my $session = $conf->{'mojo_session'} || $conf->{'mojo.session'} || $conf->{'mojo'}{'session'} || $conf->{'сессия'}
+  my $session = $conf->{'mojo_session'} || $conf->{'mojo_sessions'}  || $conf->{'mojo.session'}  || $conf->{'mojo.sessions'} || $conf->{'mojo'}{'session'} || $conf->{'mojo'}{'sessions'} || $conf->{'сессии'} || $conf->{'сессия'}
     || return;
   
   #~ $app->sessions->cookie_name($session->{'cookie_name'})
@@ -191,7 +191,7 @@ sub сессия {
 sub маршруты {
   my $app = shift;
   my $conf = $app->config;
-  my $routes = $conf->{'routes'} || $conf->{'маршруты'}
+  my $routes = $conf->{'mojo_routes'} || $conf->{'mojo.routes'} || $conf->{'mojo'}{'routes'} || $conf->{'routes'} || $conf->{'маршруты'}
     or return;
   my $app_routes = $app->routes;
   my $apply_route = sub {
@@ -224,7 +224,7 @@ sub маршруты {
 sub спейсы {
   my $app = shift;
   my $conf = $app->config;
-  my $ns = $conf->{'namespaces'} || $conf->{'ns'} || $conf->{'спейсы'}
+  my $ns =  $conf->{'mojo_namespaces'} || $conf->{'mojo.namespaces'} || $conf->{'mojo'}{'namespaces'} || $conf->{'namespaces'} || $conf->{'ns'} || $conf->{'спейсы'}
     || return;
   push @{$app->routes->namespaces}, @$ns;
 }
@@ -242,6 +242,17 @@ sub задачи {
     $app->log->debug(sprintf("Applied task [%s] in [%s] from config", $name, $app->minion->add_task($name => $sub)));
   }
   #~ $app->minion->reset;
+}
+
+sub типы {
+  my $app = shift;
+  my $conf = $app->config;
+  my $types = $conf->{'mojo_types'}  || $conf->{'mojo.types'} || $conf->{'mojo'}{'types'} || $conf->{'types'} || $conf->{'типы'}
+    or return;
+  while (my ($name, $val) = each %$types) {
+    $app->types->type($name => $val);
+    $app->log->debug(sprintf("Applied type [%s] from config", $name));
+  }
 }
 
 # overide only on my $path   = $req->url->path->to_abs_string;
@@ -272,7 +283,7 @@ sub Mojolicious::dispatch {
 }
 
 
-our $VERSION = '0.08071';# as to Mojolicious/100+0.000<minor>
+our $VERSION = '0.0811';# as to Mojolicious/100+0.000<minor>
 
 =pod
 
@@ -313,11 +324,16 @@ Mojolicious::Che - Мой базовый модуль для приложени�
     # log => {level=>...}
     # static => {paths => [...]},
     # renderer => {paths => [...], classes => [...], },
-    # session =>
+    # session[s] =>
     # has =>
-    # plugins=>
+    # plugins =>
     # hooks =>
+    # namespaces =>
+    # routes =>
+    # jobs =>
+    # types =>
   # },
+  # or with prefix mojo_
   # Default values for "stash" in Mojolicious::Controller, assigned for every new request.
   mojo_defaults => {layout=>'default',},
   # 'шифры' => [
@@ -326,8 +342,8 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   mojo_log=>{level => 'error'},
   mojo_static_paths => ["static"],
   mojo_renderer_classes => ["Mojolicious::Foo::Fun"],
-  # 'сессия' => 
-  mojo_session => {cookie_name => 'EXX', default_expiration => 86400},
+  # 'сессия'(или сессии) => 
+  mojo_session[s] => {cookie_name => 'EXX', default_expiration => 86400},
   
   # 'хазы' => 'Лет 500-700 назад был такой дикий степной торговый жадный народ ХАЗАРЫ. Столицей их "государства" был город Тьмутаракань, где-то на берегу моря Каспия. Потомки этих людей рассыпаны по странам России, Средней Азии, Европы. Есть мнение, что хазары присвоили себе название ЕВРЕИ, но это не те библейские кроткие евреи, а жадные потомки кроманьонцев'
   mojo_has => {
@@ -381,9 +397,9 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   mojo_hooks=>{
     #~ before_dispatch => sub {1;},
   },
-  # 'спейсы' => 
+  # 'спейсы' => [...]
   namespaces => ['Space::Shattle'],
-  # 'маршруты' => 
+  # 'маршруты' => [...]
   routes => [
     [get=>'/', to=> {cb=>sub{shift->render(format=>'txt', text=>'Hello friend!');},}],
   ]
@@ -394,6 +410,11 @@ Mojolicious::Che - Мой базовый модуль для приложени�
       sleep 5;
       $job->app->log->error(qq{slow_log "$msg"});
     },
+  },
+  # или 'типы'=>{...}
+  types => {
+    docx => ['application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+    ...
   },
   };
 
@@ -414,33 +435,35 @@ Set prepared stattements from config B<sth> (или B<запросы>).
 
   my $sth = $app->sth->{main}{foo};
 
+=head2 плугины
+
+Apply the plugins. See L<Mojolicious#plugins>, L<Mojolicious::Plugins>.
+
 =head1 METHODS
 
 B<Mojolicious::Che> inherits all methods from L<Mojolicious> and implements the following new ones.
 
 =head2 сессия()
 
-Session object config apply
+Session object config apply. See L<Mojolicious#sessions>, L<Mojolicious::Sessions>.
 
 =head2 хазы()
 
 Apply the has's. UTF names allow.
 
-=head2 плугины()
-
-Apply the plugins
-
 =head2 хуки()
 
-Apply the hooks
+Apply the hooks. See L<Mojolicious#HOOKS>.
 
 =head2 спейсы()
 
-Apply the namespases
+Apply the namespaces. Push @{$app->routes->namespaces} your namespaces. See L<Mojolicious#routes>.
+
+  namespaces => ['Space::Shattle'],
 
 =head2 маршруты()
 
-Apply the routes
+Apply the routes. See L<Mojolicious#routes>, L<Mojolicious::Guides::Routing>.
 
   #~ 'маршруты' => [
   'routes'=>[
@@ -449,7 +472,7 @@ Apply the routes
 
 =head2 задачи()
 
-Apply the jobs
+Apply the jobs. See L<Minion>.
 
   #~ 'задачи'=> {#first enable plugin Minion
   'jobs'=> { # or tasks
@@ -460,6 +483,10 @@ Apply the jobs
     },
     
   },
+
+=head типы()
+
+Apply the new types. See L<Mojolicious#types>, L<Mojolicious::Types>.
 
 =head1 SEE ALSO
 
@@ -473,7 +500,8 @@ L<Ado>
 
 =head1 BUGS / CONTRIBUTING
 
-Please report any bugs or feature requests at L<https://github.com/mche/Mojolicious-Che/issues>. Pull requests also welcome.
+Please report any bugs or feature requests at L<https://github.com/mche/Mojolicious-Che/issues>.
+Pull requests also welcome.
 
 =head1 COPYRIGHT
 
