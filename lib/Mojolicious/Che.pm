@@ -12,6 +12,10 @@ sub new {
   my $app = $class->SUPER::new(%args);
   
   $app->plugin(Config =>{file => $config});
+  
+  #~ return $app # остановка или двойной перезапуск kill -USR2
+    #~ if $ENV{HYPNOTOAD_PID} || $ENV{HYPNOTOAD_STOP};
+  
   my $conf = $app->config;
   $conf->{mojo} ||= {};
   
@@ -52,6 +56,7 @@ sub new {
   $app->маршруты();
   $app->задачи();
   $app->типы();
+  #~ $app->minion_worker();
 
   return $app;
 
@@ -244,7 +249,8 @@ sub задачи {
   #~ $app->minion->reset;
 }
 
-sub типы {
+
+sub типы {#MIME
   my $app = shift;
   my $conf = $app->config;
   my $types = $conf->{'mojo_types'}  || $conf->{'mojo.types'} || $conf->{'mojo'}{'types'} || $conf->{'types'} || $conf->{'типы'}
@@ -283,7 +289,7 @@ sub Mojolicious::dispatch {
 }
 
 
-our $VERSION = '0.0811';# as to Mojolicious/100+0.000<minor>
+our $VERSION = '0.0812';# as to Mojolicious/100+0.000<minor>
 
 =pod
 
@@ -297,7 +303,7 @@ our $VERSION = '0.0811';# as to Mojolicious/100+0.000<minor>
 
 =head1 VERSION
 
-0.08071
+0.0812
 
 =head1 NAME
 
