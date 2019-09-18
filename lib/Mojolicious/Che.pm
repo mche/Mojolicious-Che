@@ -490,7 +490,7 @@ Apply the jobs. See L<Minion>.
     
   },
 
-=head типы()
+=head2 типы()
 
 Apply the new types. See L<Mojolicious#types>, L<Mojolicious::Types>.
 
