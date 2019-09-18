@@ -278,8 +278,8 @@ sub Mojolicious::dispatch {
     my $req    = $c->req;
     my $url = $req->url->to_abs;
     $c->helpers->timing->begin('mojo.timer');
-    return sprintf qq{%s "%s://%s%s%s" (%s)},
-      $req->method, $url->scheme, $url->host, $url->port ? ":".$url->port : '', $url->path->to_route, $req->request_id;
+    return sprintf qq{[%s] %s "%s://%s%s%s"},
+      $req->request_id, $req->method, $url->scheme, $url->host, $url->port ? ":".$url->port : '', $url->path->to_route;
   }) unless $stash->{'mojo.static'};
 
   # Routes
@@ -289,7 +289,7 @@ sub Mojolicious::dispatch {
 }
 
 
-our $VERSION = '0.0823';# as to Mojolicious/100+0.000<minor>
+our $VERSION = '0.0824';# as to Mojolicious/100+0.000<minor>
 
 =pod
 
@@ -303,7 +303,7 @@ our $VERSION = '0.0823';# as to Mojolicious/100+0.000<minor>
 
 =head1 VERSION
 
-0.0823
+0.0824
 
 =head1 NAME
 
