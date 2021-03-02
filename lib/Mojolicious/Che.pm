@@ -1,5 +1,5 @@
 package Mojolicious::Che;
-use Mojo::Base::Che; # один патч для хазов
+use Mojo::Base::Che;
 use Mojo::Base  'Mojolicious';
 use Mojo::Log::Che;
 use Mojo::Loader qw(load_class);
@@ -48,8 +48,6 @@ sub new {
   
   $app->сессия();
   $app->хазы();
-  #~ $app->базы();
-  #~ $app->запросы();
   $app->плугины();
   $app->хуки();
   $app->спейсы();
@@ -274,22 +272,23 @@ sub Mojolicious::dispatch {
 
   # Start timer (ignore static files)
   my $stash = $c->stash;
-  $self->log->debug(sub {
+  $c->helpers->log->debug(sub {
     my $req    = $c->req;
     my $url = $req->url->to_abs;
     $c->helpers->timing->begin('mojo.timer');
-    return sprintf qq{[%s] %s "%s://%s%s%s"},
-      $req->request_id, $req->method, $url->scheme, $url->host, $url->port ? ":".$url->port : '', $url->path->to_route;
+    #~ return sprintf qq{[%s] %s "%s://%s%s%s"},
+      #~ $req->request_id, $req->method, $url->scheme, $url->host, $url->port ? ":".$url->port : '', $url->path->to_route;
+    return sprintf qq{%s "%s"}, $req->method, Mojo::Util::decode('UTF-8',  Mojo::Util::url_unescape($url));
   }) unless $stash->{'mojo.static'};
 
   # Routes
   $plugins->emit_hook(before_routes => $c);
   $c->helpers->reply->not_found
-    unless $tx->res->code || $self->routes->dispatch($c) || $tx->res->code;
+    unless $tx->res->code || $self->routes->dispatch($c) || $tx->res->code || $stash->{'mojo.rendered'};
 }
 
 
-our $VERSION = '0.0824';# as to Mojolicious/100+0.000<minor>
+our $VERSION = '0.0902';# as to Mojolicious/100+0.000<minor>
 
 =pod
 
@@ -303,7 +302,7 @@ our $VERSION = '0.0824';# as to Mojolicious/100+0.000<minor>
 
 =head1 VERSION
 
-0.0824
+0.0902
 
 =head1 NAME
 
