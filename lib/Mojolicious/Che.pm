@@ -84,14 +84,11 @@ has плугины => sub {
   return $плугины;
 };
 
-has dbh => sub {
-#~ sub базы {# обрабатывает dbh конфига
+has dbh => sub {#~ sub базы {# обрабатывает dbh конфига
   my $app = shift;
   my $conf = $app->config;
   my $c_dbh = $conf->{dbh} || $conf->{'базы'};
   return unless $c_dbh && ref($c_dbh) eq 'HASH' && keys %$c_dbh;
-  #~ has dbh => sub {{};}
-    #~ unless $app->can('dbh');
   
   my $dbh = {};
   
@@ -117,41 +114,36 @@ has dbh => sub {
   
 };
 
-has sth => sub {
-
-#~ sub запросы {# обрабатывает sth конфига
-  my $app = shift;
-  my $dbh = eval { $app->dbh }
-    or return;
-  #~ my %arg = @_;
-  my $conf = $app->config;
+#~ has sth => sub {#~ sub запросы {# обрабатывает sth конфига
+  #~ my $app = shift;
+  #~ my $dbh = eval { $app->dbh }
+    #~ or return;
+  #~ my $conf = $app->config;
   
-  my $c_dbh = $conf->{dbh} || $conf->{'базы'};
-  my $c_sth = $conf->{sth} || $conf->{'запросы'} || {};
-  #~ my $c_pos = $conf->{pos} || $conf->{'посы'} || {};
+  #~ my $c_dbh = $conf->{dbh} || $conf->{'базы'};
+  #~ my $c_sth = $conf->{sth} || $conf->{'запросы'} || {};
     
-  return
-    unless ($c_sth && ref($c_sth) eq 'HASH' && keys %$c_sth);
-    #~ || ($c_pos && ref($c_pos) eq 'HASH' && keys %$c_pos);
+  #~ return
+    #~ unless ($c_sth && ref($c_sth) eq 'HASH' && keys %$c_sth);
 
-  my $sth = {};
+  #~ my $sth = {};
   
-  while (my ($db, $opt) = each %$c_dbh) {
-    while (my ($st, $sql) = each %{$opt->{sth}}) {
-      $sth->{$db}{$st} = $dbh->{$db}->prepare($sql);# $app->sth->{main}{...}
-      $app->log->debug("Подготовился запрос [app->sth->{$db}{$st}]");
-    }
-  }
+  #~ while (my ($db, $opt) = each %$c_dbh) {
+    #~ while (my ($st, $sql) = each %{$opt->{sth}}) {
+      #~ $sth->{$db}{$st} = $dbh->{$db}->prepare($sql);# $app->sth->{main}{...}
+      #~ $app->log->debug("Подготовился запрос [app->sth->{$db}{$st}]");
+    #~ }
+  #~ }
   
-  while (my ($db, $h) = each %$c_sth) {
-    while (my ($st, $sql) = each %$h) {
-      $sth->{$db}{$st} = $dbh->{$db}->prepare($sql);# $app->sth->{main}{...}
-      $app->log->debug("Подготовился запрос [app->sth->{$db}{$st}]");
-    }
-  }
+  #~ while (my ($db, $h) = each %$c_sth) {
+    #~ while (my ($st, $sql) = each %$h) {
+      #~ $sth->{$db}{$st} = $dbh->{$db}->prepare($sql);# $app->sth->{main}{...}
+      #~ $app->log->debug("Подготовился запрос [app->sth->{$db}{$st}]");
+    #~ }
+  #~ }
   
-   $sth;
-};
+   #~ $sth;
+#~ };
 
   
 sub хуки {# Хуки из конфига
@@ -288,7 +280,7 @@ sub Mojolicious::dispatch {
 }
 
 
-our $VERSION = '0.0902';# as to Mojolicious/100+0.000<minor>
+our $VERSION = '0.09021';# as to Mojolicious/100+0.000<minor>
 
 =pod
 
@@ -302,7 +294,7 @@ our $VERSION = '0.0902';# as to Mojolicious/100+0.000<minor>
 
 =head1 VERSION
 
-0.0902
+0.09021
 
 =head1 NAME
 
