@@ -87,38 +87,6 @@ has плугины => sub {
   return $плугины;
 };
 
-=pod
-has dbh => sub {#~ sub базы {# обрабатывает dbh конфига
-  my $app = shift;
-  my $conf = $app->config;
-  my $c_dbh = $conf->{dbh} || $conf->{'базы'};
-  return unless $c_dbh && ref($c_dbh) eq 'HASH' && keys %$c_dbh;
-  
-  my $dbh = {};
-  
-  my $req_dbi;
-  while (my ($db, $opt) = each %$c_dbh) {
-    if ($opt->{dbh}) {# && ref $opt eq 'DBI::db'
-      $dbh->{$db} ||= $opt->{dbh};
-    } else {
-      ++$req_dbi
-        and require DBI
-        unless $req_dbi;
-      $dbh->{$db} ||= DBI->connect(@{$opt->{connect}});
-      $app->log->debug("Соединился с базой $opt->{connect}[0] app->dbh->{'$db'}");
-    }
-    
-    map {
-      $dbh->{$db}->do($_);
-    } @{$opt->{do}} if $opt->{do};
-    
-
-  }
-  return $dbh;
-  
-};
-=cut
-
   
 sub хуки {# Хуки из конфига
   my $app = shift;
@@ -254,7 +222,7 @@ sub Mojolicious::dispatch {
 }
 
 
-our $VERSION = '0.0919';# as to Mojolicious/100+0.000<minor>
+our $VERSION = '0.09191';# as to Mojolicious/100+0.000<minor>
 
 =pod
 
@@ -268,7 +236,7 @@ our $VERSION = '0.0919';# as to Mojolicious/100+0.000<minor>
 
 =head1 VERSION
 
-0.0919
+0.09191
 
 =head1 NAME
 
@@ -356,18 +324,6 @@ Mojolicious::Che - Мой базовый модуль для приложени�
 
 B<Mojolicious::Che> inherits all attributes from L<Mojolicious> and implements the
 following new ones.
-
-=head2 dbh
-
-Set DBI handlers from config B<dbh> (или B<базы>)
-
-  my $dbh = $app->dbh->{main};
-
-=head2 sth
-
-Set prepared stattements from config B<sth> (или B<запросы>).
-
-  my $sth = $app->sth->{main}{foo};
 
 =head2 плугины
 
