@@ -38,13 +38,16 @@ sub new {
   my $home = $app->home;
   my $statics = $conf->{'mojo_static_paths'} || $conf->{'mojo.static.paths'} || $conf->{'mojo'}{'static'}{'paths'} || [];
    #~ push @{$app->static->paths}, @{$paths} if $paths;
-  push @{$app->static->paths},  $home->rel_file($_) for @$statics;
+  push @{$app->static->paths},  $home->rel_file($_)
+    for @$statics;
   
   my $templates_paths = $conf->{'mojo_renderer_paths'} || $conf->{'mojo.renderer.paths'} || $conf->{'mojo'}{'renderer'}{'paths'} || [];
-  push @{$app->renderer->paths}, $home->rel_dir($_) for @$templates_paths;
+  push @{$app->renderer->paths}, $home->rel_dir($_)
+    for @$templates_paths;
   
   my $renderer_classes = $conf->{'mojo_renderer_classes'} || $conf->{'mojo.renderer.classes'} || $conf->{'mojo'}{'renderer'}{'classes'} || [];
-  push @{$app->renderer->classes}, $_ for grep ! load_class($_), @$renderer_classes;
+  push @{$app->renderer->classes}, $_
+    for grep ! load_class($_), @$renderer_classes;
   
   $app->сессия();
   $app->хазы();
@@ -251,7 +254,7 @@ sub Mojolicious::dispatch {
 }
 
 
-our $VERSION = '0.09021';# as to Mojolicious/100+0.000<minor>
+our $VERSION = '0.0919';# as to Mojolicious/100+0.000<minor>
 
 =pod
 
