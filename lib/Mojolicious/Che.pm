@@ -84,6 +84,7 @@ has плугины => sub {
   return $плугины;
 };
 
+=pod
 has dbh => sub {#~ sub базы {# обрабатывает dbh конфига
   my $app = shift;
   my $conf = $app->config;
@@ -113,37 +114,7 @@ has dbh => sub {#~ sub базы {# обрабатывает dbh конфига
   return $dbh;
   
 };
-
-#~ has sth => sub {#~ sub запросы {# обрабатывает sth конфига
-  #~ my $app = shift;
-  #~ my $dbh = eval { $app->dbh }
-    #~ or return;
-  #~ my $conf = $app->config;
-  
-  #~ my $c_dbh = $conf->{dbh} || $conf->{'базы'};
-  #~ my $c_sth = $conf->{sth} || $conf->{'запросы'} || {};
-    
-  #~ return
-    #~ unless ($c_sth && ref($c_sth) eq 'HASH' && keys %$c_sth);
-
-  #~ my $sth = {};
-  
-  #~ while (my ($db, $opt) = each %$c_dbh) {
-    #~ while (my ($st, $sql) = each %{$opt->{sth}}) {
-      #~ $sth->{$db}{$st} = $dbh->{$db}->prepare($sql);# $app->sth->{main}{...}
-      #~ $app->log->debug("Подготовился запрос [app->sth->{$db}{$st}]");
-    #~ }
-  #~ }
-  
-  #~ while (my ($db, $h) = each %$c_sth) {
-    #~ while (my ($st, $sql) = each %$h) {
-      #~ $sth->{$db}{$st} = $dbh->{$db}->prepare($sql);# $app->sth->{main}{...}
-      #~ $app->log->debug("Подготовился запрос [app->sth->{$db}{$st}]");
-    #~ }
-  #~ }
-  
-   #~ $sth;
-#~ };
+=cut
 
   
 sub хуки {# Хуки из конфига
@@ -294,7 +265,7 @@ our $VERSION = '0.09021';# as to Mojolicious/100+0.000<minor>
 
 =head1 VERSION
 
-0.09021
+0.0919
 
 =head1 NAME
 
@@ -345,43 +316,6 @@ Mojolicious::Che - Мой базовый модуль для приложени�
   # 'хазы' => 'Лет 500-700 назад был такой дикий степной торговый жадный народ ХАЗАРЫ. Столицей их "государства" был город Тьмутаракань, где-то на берегу моря Каспия. Потомки этих людей рассыпаны по странам России, Средней Азии, Европы. Есть мнение, что хазары присвоили себе название ЕВРЕИ, но это не те библейские кроткие евреи, а жадные потомки кроманьонцев'
   mojo_has => {
     foo => sub {my $app = shift; return 'is a bar';},
-  },
-  
-  # 'базы' => 
-  # will be as has!
-  dbh=>{
-    'main' => {
-      # DBI->connect(dsn, user, passwd, $attrs)
-      connect => ["DBI:Pg:dbname=test;", "postgres", undef, {
-        ShowErrorStatement => 1,
-        AutoCommit => 1,
-        RaiseError => 1,
-        PrintError => 1, 
-        pg_enable_utf8 => 1,
-        #mysql_enable_utf8 => 1,
-        #mysql_auto_reconnect=>1,
-      }],
-      # or use Foo::Dbh; external defined dbh
-      # dbh => Dbh->dbh,
-      # will do on connect
-      do => ['set datestyle to "ISO, DMY";',],
-      # prepared sth will be as has $app->sth->{<dbh name>}{<sth name>}
-      sth => {
-        foo => <<SQL,
-  select * 
-  from foo
-  where
-    bar = ?;
-  SQL
-      },
-    }
-  },
-  # 'запросы' => 
-  # prepared sth will be as has $app->sth->{<dbh name>}{<sth name>}
-  sth => {
-    main => {
-      now => "select now();"
-    },
   },
   
   # 'плугины'=> [
